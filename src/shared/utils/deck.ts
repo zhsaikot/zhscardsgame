@@ -1,4 +1,4 @@
-import { CARD_VALUES, CARD_POWER } from './cardValues.js';
+import { CARD_VALUES, CARD_POWER } from '../constants/cardValues.js';
 import type { Card, Rank, Suit } from '../types/index.js';
 import crypto from 'crypto';
 

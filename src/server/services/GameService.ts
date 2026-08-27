@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { GameEngine } from '../engine/GameEngine.js';
-import type { GameSettings } from '../types/index.js';
+import type { GameSettings } from '../../shared/types/index.js';
 
 /**
  * Service for managing multiple game instances
