@@ -1,5 +1,5 @@
 import type { GameSettings } from '../types/index.js';
-import { DEFAULT_GAME_RULES } from './gameRules.js';
+import { DEFAULT_GAME_RULES } from '../constants/gameRules.js';
 
 /**
  * Validates if a bid is legal according to game rules

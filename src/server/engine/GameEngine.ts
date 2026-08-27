@@ -7,30 +7,30 @@ import type {
   Card, 
   Trick,
   GameSettings 
-} from '../types/index.js';
+} from '../../shared/types/index.js';
 import { 
   createDeck, 
   shuffleDeck, 
   dealCards 
-} from '../utils/deck.js';
+} from '../../shared/utils/deck.js';
 import { 
   determineTrickWinner, 
   calculateTrickPoints,
   getLegalCards,
   validateCardPlay 
-} from '../utils/trick.js';
+} from '../../shared/utils/trick.js';
 import { 
   validateBid, 
   getValidBids 
-} from '../utils/bid.js';
-import { ScoreEngine } from '../utils/score.js';
+} from '../../shared/utils/bid.js';
+import { ScoreEngine } from '../../shared/utils/score.js';
 import { 
   DEFAULT_GAME_RULES, 
   TEAM_ASSIGNMENTS, 
   getTeamForSeat,
   getNextSeat 
-} from '../constants/gameRules.js';
-import { TRICKS_PER_ROUND, FINAL_HAND_SIZE } from '../constants/cardValues.js';
+} from '../../shared/constants/gameRules.js';
+import { TRICKS_PER_ROUND, FINAL_HAND_SIZE } from '../../shared/constants/cardValues.js';
 
 /**
  * Main game engine that manages all game state and logic

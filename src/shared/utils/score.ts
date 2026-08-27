@@ -1,5 +1,5 @@
 import type { Team, GameSettings } from '../types/index.js';
-import { DEFAULT_GAME_RULES } from './gameRules.js';
+import { DEFAULT_GAME_RULES } from '../constants/gameRules.js';
 
 /**
  * Score engine for calculating round and game scores
