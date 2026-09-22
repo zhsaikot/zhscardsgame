@@ -28,9 +28,10 @@ import {
   DEFAULT_GAME_RULES, 
   TEAM_ASSIGNMENTS, 
   getTeamForSeat,
-  getNextSeat 
+  getNextSeat,
+  FINAL_HAND_SIZE 
 } from '../../shared/constants/gameRules.js';
-import { TRICKS_PER_ROUND, FINAL_HAND_SIZE } from '../../shared/constants/cardValues.js';
+import { TRICKS_PER_ROUND } from '../../shared/constants/cardValues.js';
 
 /**
  * Main game engine that manages all game state and logic
