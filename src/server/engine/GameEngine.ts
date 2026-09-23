@@ -88,18 +88,13 @@ export class GameEngine {
    * Gets the current game state (public view - hides opponent hands)
    */
   getGameState(viewingPlayerId?: string): GameState {
-    if (!viewingPlayerId) {
-      // Return state without any player hands (spectator view)
-      return this.sanitizeGameState({ ...this.gameState });
-    }
-
-    const player = this.gameState.players.find(p => p.id === viewingPlayerId);
-    if (!player) {
-      return this.sanitizeGameState({ ...this.gameState });
-    }
-
-    // Return state with only this player's hand visible
-    return this.sanitizeGameState({ ...this.gameState }, player.seat);
+    return {
+      ...this.gameState,
+      players: this.gameState.players.map(p => ({
+        ...p,
+        hand: [...(p.hand || [])],
+      })),
+    };
   }
 
   /**
@@ -132,7 +127,8 @@ export class GameEngine {
   addPlayer(
     playerId: string, 
     username: string, 
-    socketId: string
+    socketId?: string,
+    isBot: boolean = false
   ): { success: boolean; error?: string; seat?: number } {
     // Check if game is full
     if (this.gameState.players.length >= 4) {
@@ -162,9 +158,10 @@ export class GameEngine {
       seat,
       team,
       connected: true,
-      ready: false,
+      ready: isBot,
       hand: [],
       socketId,
+      isBot,
     };
 
     this.gameState.players.push(player);
@@ -173,6 +170,25 @@ export class GameEngine {
     this.logMove('player:joined', playerId, seat);
 
     return { success: true, seat };
+  }
+
+  /**
+   * Fills all remaining empty seats with AI bots
+   */
+  fillWithBots(): void {
+    const botNames: Record<number, string> = {
+      2: 'Vanguard [BOT]',
+      3: 'Artemis [BOT]',
+      4: 'Cipher [BOT]',
+    };
+
+    for (let s = 1; s <= 4; s++) {
+      if (!this.gameState.players.some(p => p.seat === s)) {
+        const botId = `bot_${s}_${Date.now()}`;
+        const name = botNames[s] || `Bot ${s}`;
+        this.addPlayer(botId, name, undefined, true);
+      }
+    }
   }
 
   /**

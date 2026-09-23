@@ -24,6 +24,7 @@ export interface Player {
   ready: boolean;
   hand: Card[];
   socketId?: string;
+  isBot?: boolean;
 }
 
 export interface Bid {
@@ -93,6 +94,8 @@ export interface GameState {
   currentTrick: Trick | null;
   completedTricks: Trick[];
   teamPoints: { A: number; B: number };
+  winningTeam?: Team | null;
+  contractResult?: 'success' | 'failure' | null;
   gameScore: GameScore;
   roundNumber: number;
   settings: GameSettings;

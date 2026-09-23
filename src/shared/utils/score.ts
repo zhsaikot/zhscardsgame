@@ -72,8 +72,13 @@ export class ScoreEngine {
 
     if (contractResult === 'success') {
       // Successful contract - both teams get their earned points
-      teamAScore = teamPoints.A;
-      teamBScore = teamPoints.B;
+      if (bidderTeam === 'A') {
+        teamAScore = bidderTeamPoints;
+        teamBScore = opponentTeamPoints;
+      } else {
+        teamAScore = opponentTeamPoints;
+        teamBScore = bidderTeamPoints;
+      }
     } else {
       // Failed contract - opponents get winning bid amount
       if (bidderTeam === 'A') {

@@ -8,14 +8,24 @@ interface PlayerHandProps {
   leadSuit: Suit | null;
 }
 
+export const SUIT_SYMBOLS: Record<Suit, string> = {
+  spades: '♠',
+  hearts: '♥',
+  diamonds: '♦',
+  clubs: '♣',
+};
+
 const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }) => {
   const { playCard, selectedCard, setSelectedCard } = useGameStore();
 
   const handleCardClick = (card: Card) => {
     if (!isCurrentTurn) return;
 
+    const isLegal = getLegalCards().includes(card.id);
+    if (!isLegal) return;
+
     if (selectedCard?.id === card.id) {
-      // Play the card
+      // Play the card immediately
       playCard(card.id);
       setSelectedCard(null);
     } else {
@@ -39,54 +49,71 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
 
   return (
     <div className="player-hand">
-      <div className="hand-cards">
-        {hand.map((card) => {
-          const isSelected = selectedCard?.id === card.id;
-          const isLegal = legalCardIds.includes(card.id);
-          const canPlay = isCurrentTurn && isLegal;
+      {hand.length === 0 ? (
+        <div className="empty-hand-notice">
+          <div className="loading-spinner mini" style={{ width: '20px', height: '20px', borderWidth: '2px' }} />
+          <span>Dealing cards...</span>
+        </div>
+      ) : (
+        <div className="hand-cards">
+          {hand.map((card) => {
+            const isSelected = selectedCard?.id === card.id;
+            const isLegal = legalCardIds.includes(card.id);
+            const canPlay = isCurrentTurn && isLegal;
 
-          return (
-            <div
-              key={card.id}
-              className={`card ${isSelected ? 'selected' : ''} ${!canPlay && isCurrentTurn ? 'disabled' : ''}`}
-              onClick={() => handleCardClick(card)}
-              data-rank={card.rank}
-              data-suit={card.suit}
-            >
-              <div className="card-face">
-                <div className="card-corner top-left">
-                  <span className="rank">{card.rank}</span>
-                  <span className="suit-symbol">{getSuitSymbol(card.suit)}</span>
-                </div>
-                <div className="card-center">
-                  <span className="suit-symbol large">{getSuitSymbol(card.suit)}</span>
-                </div>
-                <div className="card-corner bottom-right">
-                  <span className="rank inverted">{card.rank}</span>
-                  <span className="suit-symbol inverted">{getSuitSymbol(card.suit)}</span>
+            return (
+              <div
+                key={card.id}
+                className={`card ${isSelected ? 'selected' : ''} ${canPlay ? 'legal-move' : ''} ${!canPlay && isCurrentTurn ? 'disabled' : ''}`}
+                onClick={() => handleCardClick(card)}
+                data-rank={card.rank}
+                data-suit={card.suit}
+                title={canPlay ? `Play ${card.rank} of ${card.suit}` : undefined}
+              >
+                <div className="card-face">
+                  <div className="card-corner top-left">
+                    <span className="rank">{card.rank}</span>
+                    <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
+                  </div>
+                  <div className="card-center">
+                    <span className="suit-symbol large">{SUIT_SYMBOLS[card.suit]}</span>
+                  </div>
+                  <div className="card-corner bottom-right">
+                    <span className="rank">{card.rank}</span>
+                    <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      )}
+
+      <div className="hand-hints-row">
+        {isCurrentTurn && selectedCard && legalCardIds.includes(selectedCard.id) && (
+          <button
+            className="btn-play-action"
+            onClick={() => {
+              playCard(selectedCard.id);
+              setSelectedCard(null);
+            }}
+          >
+            ▶ Play {selectedCard.rank}{SUIT_SYMBOLS[selectedCard.suit]}
+          </button>
+        )}
+        {isCurrentTurn && selectedCard && (
+          <div className="play-hint">
+            Tap card again to play
+          </div>
+        )}
+        {isCurrentTurn && leadSuit && (
+          <div className="lead-suit-info">
+            Must follow suit: {SUIT_SYMBOLS[leadSuit]} {leadSuit}
+          </div>
+        )}
       </div>
-      {isCurrentTurn && selectedCard && (
-        <div className="play-hint">Click again to play {selectedCard.rank}{getSuitSymbol(selectedCard.suit)}</div>
-      )}
-      {isCurrentTurn && leadSuit && (
-        <div className="lead-suit-info">Must follow: {getSuitSymbol(leadSuit)} {leadSuit}</div>
-      )}
     </div>
   );
 };
-
-function getSuitSymbol(suit: Suit): string {
-  switch (suit) {
-    case 'spades': return '♠';
-    case 'hearts': return '♥';
-    case 'diamonds': return '♦';
-    case 'clubs': return '♣';
-  }
-}
 
 export default PlayerHand;

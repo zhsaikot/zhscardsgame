@@ -63,13 +63,13 @@ describe('Trick Engine', () => {
       const diamonds = deck.filter(c => c.suit === 'diamonds');
       
       const plays = [
-        { seat: 1, card: hearts[3] }, // 10H
-        { seat: 2, card: hearts[5] }, // QH
-        { seat: 3, card: diamonds[0] }, // JD - off suit
-        { seat: 4, card: hearts[6] }, // 8H
+        { seat: 1, card: hearts[3] }, // 10H (power 5)
+        { seat: 2, card: hearts[1] }, // 9H (power 7 - highest heart)
+        { seat: 3, card: diamonds[0] }, // JD (power 8 - off suit, cannot win)
+        { seat: 4, card: hearts[6] }, // 8H (power 2)
       ];
       
-      // QH should win (highest heart, trump is clubs)
+      // 9H should win (highest heart in lead suit, trump is clubs, JD off-suit)
       const winner = determineTrickWinner(plays, 'hearts', 'clubs');
       expect(winner).toBe(2);
     });

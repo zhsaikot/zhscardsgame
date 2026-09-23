@@ -17,6 +17,7 @@ interface GameStore {
   connect: (url?: string) => void;
   disconnect: () => void;
   createGame: (username: string) => Promise<string>;
+  startSoloGame: (username: string) => Promise<string>;
   joinGame: (gameId: string, username: string) => Promise<void>;
   leaveGame: () => void;
   setReady: (ready: boolean) => void;
@@ -24,6 +25,7 @@ interface GameStore {
   passBid: () => void;
   selectTrump: (suit: Suit) => void;
   playCard: (cardId: string) => void;
+  nextRound: () => void;
   requestGameState: () => void;
   setSelectedCard: (card: Card | null) => void;
   clearError: () => void;
@@ -39,8 +41,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectedCard: null,
   error: null,
 
-  connect: (url = 'http://localhost:4000') => {
-    const socket = io(url, {
+  connect: (url?: string) => {
+    const defaultUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:4000'
+      : `${window.location.protocol}//${window.location.hostname}:4000`;
+    const targetUrl = url || defaultUrl;
+
+    const socket = io(targetUrl, {
       transports: ['websocket'],
       autoConnect: true,
     });
@@ -60,24 +67,41 @@ export const useGameStore = create<GameStore>((set, get) => ({
       set({ error: data.message });
     });
 
+    const syncState = (incomingState: GameState, extraUpdates: Record<string, any> = {}) => {
+      if (!incomingState) return;
+      const { playerId, gameState: existingState } = get();
+
+      if (playerId && existingState?.players && incomingState.players) {
+        const existingPlayer = existingState.players.find((p) => p.id === playerId);
+        const incomingPlayer = incomingState.players.find((p) => p.id === playerId);
+
+        // If incoming state lacks hand but existing state has hand, preserve it
+        if (incomingPlayer && existingPlayer?.hand?.length && (!incomingPlayer.hand || incomingPlayer.hand.length === 0)) {
+          incomingPlayer.hand = existingPlayer.hand;
+        }
+      }
+
+      set({ gameState: incomingState, ...extraUpdates });
+    };
+
     socket.on('game:state', (data: { gameState: GameState }) => {
       console.log('Received game state:', data.gameState);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('player:joined', (data: { playerId: string; username: string; seat: number; gameState: GameState }) => {
       console.log('Player joined:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('player:left', (data: { playerId: string; gameState: GameState }) => {
       console.log('Player left:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('player:disconnected', (data: { playerId: string; gameState: GameState }) => {
       console.log('Player disconnected:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('player:reconnected', (data: { playerId: string }) => {
@@ -86,72 +110,72 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     socket.on('game:started', (data: { gameState: GameState }) => {
       console.log('Game started:', data);
-      set({ gameState: data.gameState, error: null });
+      syncState(data.gameState, { error: null });
     });
 
     socket.on('cards:dealt', (data: { gameState: GameState }) => {
       console.log('Cards dealt:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('bid:turn', (data: { currentTurn: number; gameState: GameState }) => {
       console.log('Bid turn:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('bid:placed', (data: { playerId: string; amount: number; highestBid: number; winningBidder: number; gameState: GameState }) => {
       console.log('Bid placed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('bid:passed', (data: { playerId: string; gameState: GameState }) => {
       console.log('Bid passed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('bid:completed', (data: { winningBidder: number; winningBid: number; gameState: GameState }) => {
       console.log('Bidding completed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('trump:selection', (data: { playerId: number; gameState: GameState }) => {
       console.log('Trump selection:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('trump:selected', (data: { playerId: string; suit: Suit; gameState: GameState }) => {
       console.log('Trump selected:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('trump:revealed', (data: { suit: Suit; gameState: GameState }) => {
       console.log('Trump revealed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('turn:changed', (data: { currentTurn: number; leadSuit: Suit | null; gameState: GameState }) => {
       console.log('Turn changed:', data);
-      set({ gameState: data.gameState, selectedCard: null });
+      syncState(data.gameState, { selectedCard: null });
     });
 
     socket.on('card:played', (data: { playerId: string; cardId: string; seat: number; gameState: GameState }) => {
       console.log('Card played:', data);
-      set({ gameState: data.gameState, selectedCard: null });
+      syncState(data.gameState, { selectedCard: null });
     });
 
     socket.on('trick:completed', (data: { winner: number; gameState: GameState }) => {
       console.log('Trick completed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('round:completed', (data: { gameState: GameState }) => {
       console.log('Round completed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     socket.on('game:completed', (data: { gameState: GameState }) => {
       console.log('Game completed:', data);
-      set({ gameState: data.gameState });
+      syncState(data.gameState);
     });
 
     set({ socket });
@@ -198,6 +222,38 @@ export const useGameStore = create<GameStore>((set, get) => ({
       
       // Set timeout
       setTimeout(() => reject(new Error('Timeout creating game')), 5000);
+    });
+  },
+
+  startSoloGame: async (username: string): Promise<string> => {
+    const { socket } = get();
+
+    if (!socket) {
+      throw new Error('Not connected to server');
+    }
+
+    const playerId = `player_${Date.now()}`;
+
+    return new Promise((resolve, reject) => {
+      socket.emit('game:startSolo', {
+        playerId,
+        username,
+      });
+
+      set({ playerId, username });
+
+      socket.once('player:joined', (data: { gameId?: string }) => {
+        if (data.gameId) {
+          set({ gameId: data.gameId });
+          resolve(data.gameId);
+        }
+      });
+
+      socket.once('error', (err: { message: string }) => {
+        reject(new Error(err.message));
+      });
+
+      setTimeout(() => reject(new Error('Timeout starting solo game')), 5000);
     });
   },
 
@@ -273,6 +329,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     if (socket && playerId) {
       socket.emit('card:play', { playerId, cardId });
+    }
+  },
+
+  nextRound: () => {
+    const { socket, playerId } = get();
+    
+    if (socket && playerId) {
+      socket.emit('game:nextRound', { playerId });
     }
   },
 

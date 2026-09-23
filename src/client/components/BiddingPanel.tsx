@@ -10,43 +10,36 @@ const BiddingPanel: React.FC = () => {
 
   const validBids = getValidBids(gameState.highestBid, gameState.settings || DEFAULT_GAME_RULES);
 
-  // Show limited bid options for better UX
-  const displayBids = validBids.slice(0, 6); // Show first 6 valid bids
-
   return (
     <div className="bidding-panel">
-      <h3>Your Bid</h3>
+      <h3 className="gold-text">Place Your Bid</h3>
       <p className="current-highest">
-        Current highest: {gameState.highestBid || 'None'}
+        Current Highest:{' '}
+        <strong style={{ color: 'var(--gold-light)' }}>
+          {gameState.highestBid ? `${gameState.highestBid} pts` : 'No bids yet (Min 16)'}
+        </strong>
       </p>
-      
+
       <div className="bid-buttons">
-        {displayBids.map((bid) => (
+        {validBids.map((bid) => (
           <button
             key={bid}
-            className="btn btn-bid"
+            className="btn-chip"
             onClick={() => placeBid(bid)}
+            title={`Bid ${bid} points`}
           >
             {bid}
           </button>
         ))}
-        
-        {validBids.length > 6 && (
-          <span className="more-bids">+{validBids.length - 6} more</span>
-        )}
       </div>
 
       <button
         className="btn btn-pass"
         onClick={() => passBid()}
+        style={{ width: '100%', marginTop: '0.4rem', padding: '0.75rem' }}
       >
-        PASS
+        PASS BID
       </button>
-
-      <div className="bid-info">
-        <p>Min bid: {gameState.settings?.minBid || 16}</p>
-        <p>Max bid: {gameState.settings?.maxBid || 28}</p>
-      </div>
     </div>
   );
 };

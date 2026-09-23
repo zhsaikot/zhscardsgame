@@ -14,8 +14,14 @@ function App() {
     <div className="app">
       {!connected ? (
         <div className="connection-screen">
-          <h1>29 Card Game</h1>
-          <p>Connecting to server...</p>
+          <div className="connection-logo">29</div>
+          <div className="loading-spinner" />
+          <h2 className="gold-text" style={{ fontSize: '1.6rem', marginTop: '0.5rem' }}>
+            Royal Emerald Club
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+            Connecting to high-stakes table...
+          </p>
         </div>
       ) : !gameId ? (
         <Lobby />
