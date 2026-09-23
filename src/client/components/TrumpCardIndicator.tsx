@@ -72,3 +72,4 @@ export const TrumpCardIndicator: React.FC = () => {
 };
 
 export default TrumpCardIndicator;
+
