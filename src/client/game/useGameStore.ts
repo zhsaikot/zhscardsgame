@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-import type { GameState, Player, Card, Suit } from '@shared/types';
+import type { GameState, Player, Card, Suit, Trick } from '@shared/types';
+
+export interface TrickCelebration {
+  winnerSeat: number;
+  playerName: string;
+  points: number;
+  trick: Trick | null;
+}
 
 interface GameStore {
   // State
@@ -12,6 +19,7 @@ interface GameStore {
   gameId: string | null;
   selectedCard: Card | null;
   error: string | null;
+  trickCelebration: TrickCelebration | null;
   
   // Actions
   connect: (url?: string) => void;
@@ -40,6 +48,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   gameId: null,
   selectedCard: null,
   error: null,
+  trickCelebration: null,
 
   connect: (url?: string) => {
     const defaultUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -163,8 +172,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
       syncState(data.gameState, { selectedCard: null });
     });
 
-    socket.on('trick:completed', (data: { winner: number; gameState: GameState }) => {
+    socket.on('trick:completed', (data: { winner: number; completedTrick?: any; gameState: GameState }) => {
       console.log('Trick completed:', data);
+      const winnerPlayer = data.gameState?.players?.find((p) => p.seat === data.winner);
+      const playerName = winnerPlayer?.username || `Seat ${data.winner}`;
+      const trickObj = data.completedTrick || data.gameState?.lastCompletedTrick || null;
+      const points = trickObj?.points ?? 0;
+
+      set({
+        trickCelebration: {
+          winnerSeat: data.winner,
+          playerName,
+          points,
+          trick: trickObj,
+        },
+      });
+
+      setTimeout(() => {
+        set({ trickCelebration: null });
+      }, 1800);
+
       syncState(data.gameState);
     });
 

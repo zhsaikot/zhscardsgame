@@ -18,86 +18,65 @@ const GameInfo: React.FC<GameInfoProps> = ({ onToggleRules }) => {
   return (
     <header className="game-hud">
       {/* Left: Round & Trick info */}
-      <div className="hud-left">
+      <div className="hud-section hud-left">
         <div className="hud-badge">
-          <span className="hud-label">Round</span>
+          <span className="hud-label">RND</span>
           <span className="hud-value">{gameState.roundNumber || 1}</span>
         </div>
         <div className="hud-badge">
-          <span className="hud-label">Trick</span>
+          <span className="hud-label">TRICK</span>
           <span className="hud-value">{Math.min(trickNum, 8)}/8</span>
         </div>
-        {gameState.dealer && (
-          <div className="hud-badge" style={{ display: 'none' /* visible on desktop via CSS */ }}>
-            <span className="hud-label">Dealer</span>
-            <span className="hud-value">Seat {gameState.dealer}</span>
-          </div>
-        )}
       </div>
 
-      {/* Center: Trump & Current Phase */}
-      <div className="hud-center">
-        {gameState.trumpSuit ? (
-          <div className={`trump-pill ${gameState.trumpSuit}`}>
-            <span className="suit-icon">{SUIT_SYMBOLS[gameState.trumpSuit]}</span>
-            <span style={{ textTransform: 'capitalize', fontWeight: 700 }}>
-              {gameState.trumpSuit}
-            </span>
-          </div>
-        ) : (
-          <div className="trump-pill" style={{ opacity: 0.7 }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-              Trump: {gameState.phase === 'BIDDING' ? 'Bidding' : 'Hidden'}
-            </span>
-          </div>
-        )}
-
-        {gameState.highestBid && (
-          <div className="hud-badge">
-            <span className="hud-label">Target Bid</span>
-            <span className="hud-value" style={{ color: 'var(--gold-primary)' }}>
-              {gameState.highestBid}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Right: Scores & Actions */}
-      <div className="hud-right">
+      {/* Center: Live Team Scores */}
+      <div className="hud-section hud-center">
         <div className="scores-bar">
-          <div className={`team-pill team-a ${isTeamABidder ? 'bidder-target' : ''}`}>
-            <span>Team A:</span>
-            <strong>{gameState.teamPoints.A}</strong>
+          <div className={`team-pill team-a ${isTeamABidder ? 'bidder-target' : ''}`} title="Team A (Seats 1 & 3)">
+            <span className="team-indicator">🦁 A:</span>
+            <span className="team-pts-main">{gameState.teamPoints.A}</span>
             {gameState.gameScore && (
-              <span style={{ opacity: 0.75, fontSize: '0.75rem' }}>
-                ({gameState.gameScore.teamA})
-              </span>
+              <span className="team-pts-sub">({gameState.gameScore.teamA})</span>
             )}
           </div>
 
-          <div className={`team-pill team-b ${isTeamBBidder ? 'bidder-target' : ''}`}>
-            <span>Team B:</span>
-            <strong>{gameState.teamPoints.B}</strong>
+          <div className={`team-pill team-b ${isTeamBBidder ? 'bidder-target' : ''}`} title="Team B (Seats 2 & 4)">
+            <span className="team-indicator">🦅 B:</span>
+            <span className="team-pts-main">{gameState.teamPoints.B}</span>
             {gameState.gameScore && (
-              <span style={{ opacity: 0.75, fontSize: '0.75rem' }}>
-                ({gameState.gameScore.teamB})
-              </span>
+              <span className="team-pts-sub">({gameState.gameScore.teamB})</span>
             )}
           </div>
         </div>
+
+        {gameState.trumpSuit && (
+          <div className={`hud-mini-trump ${gameState.trumpSuit}`}>
+            <span className="mini-trump-icon">{SUIT_SYMBOLS[gameState.trumpSuit]}</span>
+            <span className="mini-trump-name">{gameState.trumpSuit.toUpperCase()}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Right: Target Bid & Actions */}
+      <div className="hud-section hud-right">
+        {gameState.highestBid && (
+          <div className="hud-badge target-bid-badge">
+            <span className="hud-label">BID</span>
+            <span className="hud-value gold-text">{gameState.highestBid}</span>
+          </div>
+        )}
 
         {onToggleRules && (
           <button
             onClick={onToggleRules}
-            className="btn btn-secondary"
-            style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+            className="hud-btn btn-rules"
             title="Rules & Point Values"
           >
             Rules
           </button>
         )}
 
-        <button onClick={leaveGame} className="btn btn-leave" title="Leave Game">
+        <button onClick={leaveGame} className="hud-btn btn-leave-game" title="Leave Game">
           Leave
         </button>
       </div>

@@ -16,7 +16,9 @@ export const SUIT_SYMBOLS: Record<Suit, string> = {
 };
 
 const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }) => {
-  const { playCard, selectedCard, setSelectedCard } = useGameStore();
+  const { gameState, playCard, selectedCard, setSelectedCard } = useGameStore();
+
+  const isBiddingPhase = gameState?.phase === 'BIDDING';
 
   const handleCardClick = (card: Card) => {
     if (!isCurrentTurn) return;
@@ -36,13 +38,13 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
 
   // Determine which cards are legal to play
   const getLegalCards = () => {
-    if (!leadSuit) return hand.map(c => c.id);
-    
-    const matchingCards = hand.filter(c => c.suit === leadSuit);
+    if (!leadSuit) return hand.map((c) => c.id);
+
+    const matchingCards = hand.filter((c) => c.suit === leadSuit);
     if (matchingCards.length > 0) {
-      return matchingCards.map(c => c.id);
+      return matchingCards.map((c) => c.id);
     }
-    return hand.map(c => c.id);
+    return hand.map((c) => c.id);
   };
 
   const legalCardIds = isCurrentTurn ? getLegalCards() : [];
@@ -56,20 +58,29 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
         </div>
       ) : (
         <div className="hand-cards">
-          {hand.map((card) => {
+          {hand.map((card, idx) => {
             const isSelected = selectedCard?.id === card.id;
             const isLegal = legalCardIds.includes(card.id);
             const canPlay = isCurrentTurn && isLegal;
+            const hasPoint = card.pointValue > 0;
 
             return (
               <div
                 key={card.id}
-                className={`card ${isSelected ? 'selected' : ''} ${canPlay ? 'legal-move' : ''} ${!canPlay && isCurrentTurn ? 'disabled' : ''}`}
+                className={`card card-deal-anim ${isSelected ? 'selected' : ''} ${canPlay ? 'legal-move' : ''} ${!canPlay && isCurrentTurn ? 'disabled' : ''} ${isBiddingPhase ? 'bidding-view' : ''}`}
                 onClick={() => handleCardClick(card)}
                 data-rank={card.rank}
                 data-suit={card.suit}
-                title={canPlay ? `Play ${card.rank} of ${card.suit}` : undefined}
+                style={{ animationDelay: `${idx * 60}ms` }}
+                title={canPlay ? `Play ${card.rank} of ${card.suit}` : `${card.rank} of ${card.suit} (${card.pointValue} pts)`}
               >
+                {/* Point badge during bidding or inspection */}
+                {isBiddingPhase && (
+                  <div className={`card-point-pill ${hasPoint ? 'valuable' : 'zero'}`}>
+                    {card.pointValue > 0 ? `+${card.pointValue}` : '0'}
+                  </div>
+                )}
+
                 <div className="card-face">
                   <div className="card-corner top-left">
                     <span className="rank">{card.rank}</span>

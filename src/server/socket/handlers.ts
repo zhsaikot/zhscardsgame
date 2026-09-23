@@ -115,21 +115,26 @@ function triggerBotTurn(io: Server, gameId: string, engine: GameEngine): void {
       if (result.trickComplete) {
         io.to(gameId).emit('trick:completed', {
           winner: result.trickWinner,
+          completedTrick: result.completedTrick,
           gameState: newState,
         });
 
-        if (newState.phase === 'ROUND_COMPLETE') {
-          io.to(gameId).emit('round:completed', {
-            gameState: newState,
-          });
-        } else {
-          io.to(gameId).emit('turn:changed', {
-            currentTurn: newState.currentTurn,
-            leadSuit: newState.leadSuit,
-            gameState: newState,
-          });
-          setTimeout(() => triggerBotTurn(io, gameId, engine), 1000);
-        }
+        // 1.8-second celebration pause so all players can clearly see the 4th card played and who won
+        setTimeout(() => {
+          const freshState = engine.getGameState();
+          if (freshState.phase === 'ROUND_COMPLETE') {
+            io.to(gameId).emit('round:completed', {
+              gameState: freshState,
+            });
+          } else {
+            io.to(gameId).emit('turn:changed', {
+              currentTurn: freshState.currentTurn,
+              leadSuit: freshState.leadSuit,
+              gameState: freshState,
+            });
+            setTimeout(() => triggerBotTurn(io, gameId, engine), 400);
+          }
+        }, 1800);
       } else {
         io.to(gameId).emit('turn:changed', {
           currentTurn: newState.currentTurn,
@@ -514,21 +519,26 @@ export function setupSocketHandlers(io: Server): void {
       if (result.trickComplete) {
         io.to(gameId).emit('trick:completed', {
           winner: result.trickWinner,
+          completedTrick: result.completedTrick,
           gameState: state,
         });
 
-        if (state.phase === 'ROUND_COMPLETE') {
-          io.to(gameId).emit('round:completed', {
-            gameState: state,
-          });
-        } else {
-          io.to(gameId).emit('turn:changed', {
-            currentTurn: state.currentTurn,
-            leadSuit: state.leadSuit,
-            gameState: state,
-          });
-          setTimeout(() => triggerBotTurn(io, gameId, engine), 1000);
-        }
+        // 1.8-second celebration pause so all players can clearly see the 4th card played and who won
+        setTimeout(() => {
+          const freshState = engine.getGameState();
+          if (freshState.phase === 'ROUND_COMPLETE') {
+            io.to(gameId).emit('round:completed', {
+              gameState: freshState,
+            });
+          } else {
+            io.to(gameId).emit('turn:changed', {
+              currentTurn: freshState.currentTurn,
+              leadSuit: freshState.leadSuit,
+              gameState: freshState,
+            });
+            setTimeout(() => triggerBotTurn(io, gameId, engine), 400);
+          }
+        }, 1800);
       } else {
         io.to(gameId).emit('turn:changed', {
           currentTurn: state.currentTurn,

@@ -70,4 +70,55 @@ describe('GameEngine Solo & Card Flow', () => {
       expect(p.hand.length).toBe(8);
     });
   });
+
+  it('should capture completedTrick with 4 plays and update lastCompletedTrick', () => {
+    const engine = new GameEngine('game_test_3');
+    engine.addPlayer('player_1', 'Champion', 'socket_1', false);
+    engine.setReady('player_1', true);
+    engine.fillWithBots();
+    engine.startGame();
+
+    // Fast-forward bidding
+    const bidderSeat = engine.getGameState().currentTurn || 1;
+    const bidder = engine.getGameState().players.find((p) => p.seat === bidderSeat)!;
+    engine.placeBid(bidder.id, 16);
+
+    let safety = 0;
+    while (engine.getGameState().phase === 'BIDDING' && safety < 10) {
+      safety++;
+      const curSeat = engine.getGameState().currentTurn!;
+      const curPlayer = engine.getGameState().players.find((p) => p.seat === curSeat)!;
+      engine.passBid(curPlayer.id);
+    }
+
+    engine.selectTrump(bidder.id, 'hearts');
+    expect(engine.getGameState().phase).toBe('PLAYING');
+
+    // Play 4 cards in turn order to complete 1 trick
+    let trickResult: any;
+    for (let i = 0; i < 4; i++) {
+      const state = engine.getGameState();
+      const currentSeat = state.currentTurn!;
+      const player = state.players.find((p) => p.seat === currentSeat)!;
+      const legalCards = engine.getLegalCardsForPlayer(player.id);
+      expect(legalCards.length).toBeGreaterThan(0);
+
+      const res = engine.playCard(player.id, legalCards[0].id);
+      expect(res.success).toBe(true);
+      if (i === 3) {
+        trickResult = res;
+      }
+    }
+
+    expect(trickResult.trickComplete).toBe(true);
+    expect(trickResult.completedTrick).toBeDefined();
+    expect(trickResult.completedTrick.plays).toHaveLength(4);
+    expect(trickResult.trickWinner).toBeGreaterThanOrEqual(1);
+    expect(trickResult.trickWinner).toBeLessThanOrEqual(4);
+
+    const postTrickState = engine.getGameState();
+    expect(postTrickState.lastCompletedTrick).toBeDefined();
+    expect(postTrickState.lastCompletedTrick!.plays).toHaveLength(4);
+    expect(postTrickState.completedTricks).toHaveLength(1);
+  });
 });

@@ -5,24 +5,25 @@ import GameInfo from '../components/GameInfo';
 import BiddingPanel from '../components/BiddingPanel';
 import TrumpSelection from '../components/TrumpSelection';
 import TableCards from '../components/TableCards';
+import TrumpCardIndicator from '../components/TrumpCardIndicator';
 
 // SVG Crests for In-Game
 const LionMiniCrest = () => (
-  <svg width="14" height="16" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="14" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z" fill="#0c2e24" stroke="#34d399" strokeWidth="1.5" />
     <path d="M12 7L13.5 10H16L14 12L15 15L12 13.5L9 15L10 12L8 10H10.5L12 7Z" fill="#6ee7b7" />
   </svg>
 );
 
 const GriffinMiniCrest = () => (
-  <svg width="14" height="16" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="12" height="14" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z" fill="#29121a" stroke="#f87171" strokeWidth="1.5" />
     <path d="M12 8L15 11L13 13L16 16L12 14L8 16L11 13L9 11L12 8Z" fill="#fca5a5" />
   </svg>
 );
 
 const GameTable: React.FC = () => {
-  const { gameState, playerId, leaveGame, nextRound } = useGameStore();
+  const { gameState, playerId, leaveGame, nextRound, trickCelebration } = useGameStore();
   const [showRulesModal, setShowRulesModal] = useState(false);
 
   if (!gameState) {
@@ -64,18 +65,20 @@ const GameTable: React.FC = () => {
     const isCurrentTurn = gameState.currentTurn === seat;
     const isDealer = gameState.dealer === seat;
     const isWinningBidder = gameState.winningBidder === seat;
+    const isTrickWinner = trickCelebration && trickCelebration.winnerSeat === seat;
     const isTeamA = [1, 3].includes(seat);
     const cardCount = player?.hand?.length ?? 8;
     const isBot = player?.isBot || false;
 
     return (
       <div
-        className={`player-pod ${directionClass} ${isCurrentTurn ? 'active-turn' : ''}`}
+        className={`player-pod ${directionClass} ${isCurrentTurn ? 'active-turn' : ''} ${isTrickWinner ? 'trick-winner-pod' : ''}`}
         key={seat}
       >
         <div className="player-avatar-ring">
           {isDealer && <div className="dealer-chip" title="Dealer">D</div>}
           {isWinningBidder && <div className="bidder-crown" title="Winning Bidder">👑</div>}
+          {isTrickWinner && <div className="trick-win-sparkle">★</div>}
           <div className="player-avatar-inner">
             {player?.username ? player.username.substring(0, 2).toUpperCase() : `P${seat}`}
           </div>
@@ -92,7 +95,7 @@ const GameTable: React.FC = () => {
           <div className="player-team-row">
             {isTeamA ? <LionMiniCrest /> : <GriffinMiniCrest />}
             <span className="player-team-label" style={{ color: isTeamA ? '#6ee7b7' : '#fca5a5' }}>
-              {label} ({isTeamA ? 'Team A' : 'Team B'})
+              {seat === mySeat ? 'You' : label} ({isTeamA ? 'A' : 'B'})
             </span>
           </div>
 
@@ -109,6 +112,9 @@ const GameTable: React.FC = () => {
   };
 
   const getStatusText = () => {
+    if (trickCelebration) {
+      return `🎉 ${trickCelebration.playerName} won Trick (+${trickCelebration.points} pts)!`;
+    }
     if (gameState.phase === 'BIDDING') {
       return gameState.currentTurn === mySeat
         ? 'Your turn to place a bid!'
@@ -131,10 +137,11 @@ const GameTable: React.FC = () => {
   };
 
   const isMyTurn = gameState.currentTurn === mySeat;
+  const isMyBiddingTurn = gameState.phase === 'BIDDING' && isMyTurn;
 
   return (
     <div className="game-table-modern">
-      {/* Top HUD */}
+      {/* Top Mobile-First HUD */}
       <GameInfo onToggleRules={() => setShowRulesModal(true)} />
 
       {/* Main Felt Stadium Arena */}
@@ -142,6 +149,9 @@ const GameTable: React.FC = () => {
         <div className="felt-table-modern">
           <div className="felt-table-inner-glow" />
           <div className="felt-watermark">29</div>
+
+          {/* Dedicated Prominent Trump Suit Indicator Badge */}
+          <TrumpCardIndicator />
 
           {/* North Pod (Partner) */}
           {renderPlayerPod(northSeat, 'pod-north', 'Partner')}
@@ -155,21 +165,20 @@ const GameTable: React.FC = () => {
           {/* South Pod (You) */}
           {renderPlayerPod(southSeat, 'pod-south', 'You')}
 
-          {/* Center Trick Plays */}
+          {/* Center Trick Plays & Winner Banner */}
           <TableCards mySeat={mySeat} />
 
           {/* Center Status Floating Pill */}
-          <div className={`table-status-pill ${isMyTurn ? 'your-turn' : ''}`}>
+          <div className={`table-status-pill ${isMyTurn ? 'your-turn' : ''} ${trickCelebration ? 'celebrating' : ''}`}>
             {getStatusText()}
           </div>
         </div>
 
-        {/* Bidding Controls Modal/Dock */}
-        {gameState.phase === 'BIDDING' && isMyTurn && <BiddingPanel />}
-
         {/* Trump Selection Modal */}
         {gameState.phase === 'TRUMP_SELECTION' && gameState.winningBidder === mySeat && (
-          <TrumpSelection />
+          <div className="modal-overlay">
+            <TrumpSelection />
+          </div>
         )}
 
         {/* Round Complete Modal */}
@@ -273,8 +282,11 @@ const GameTable: React.FC = () => {
         )}
       </div>
 
-      {/* Bottom Player Hand Area */}
+      {/* Bottom Player Hand Area + Bidding Dock */}
       <div className="player-hand-container">
+        {/* Floating Bidding Dock sits cleanly right above the player's 4 cards */}
+        {isMyBiddingTurn && <BiddingPanel />}
+
         {currentPlayer && (
           <PlayerHand
             hand={currentPlayer.hand || []}

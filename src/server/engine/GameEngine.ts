@@ -276,6 +276,7 @@ export class GameEngine {
     this.gameState.leadSuit = null;
     this.gameState.currentTrick = null;
     this.gameState.completedTricks = [];
+    this.gameState.lastCompletedTrick = null;
     this.gameState.teamPoints = { A: 0, B: 0 };
 
     // Create and shuffle deck
@@ -502,6 +503,7 @@ export class GameEngine {
     error?: string;
     trickComplete?: boolean;
     trickWinner?: number;
+    completedTrick?: Trick;
     newState?: GameState;
   } {
     if (this.gameState.phase !== 'PLAYING') {
@@ -579,6 +581,7 @@ export class GameEngine {
     error?: string;
     trickComplete: true;
     trickWinner: number;
+    completedTrick: Trick;
     newState?: GameState;
   } {
     const trick = this.gameState.currentTrick!;
@@ -597,6 +600,7 @@ export class GameEngine {
 
     // Add to completed tricks
     this.gameState.completedTricks.push(trick);
+    this.gameState.lastCompletedTrick = trick;
 
     // Add points to winning team
     const winningTeam = getTeamForSeat(winnerSeat);
@@ -627,6 +631,7 @@ export class GameEngine {
       success: true,
       trickComplete: true,
       trickWinner: winnerSeat,
+      completedTrick: trick,
       newState: currentPlayer ? this.getGameState(currentPlayer.id) : undefined,
     };
   }
@@ -639,10 +644,12 @@ export class GameEngine {
     error?: string;
     trickComplete: true;
     trickWinner: number;
+    completedTrick: Trick;
     newState?: GameState;
   } {
     // Add final trick bonus
     const lastTrick = this.gameState.completedTricks[this.gameState.completedTricks.length - 1];
+    this.gameState.lastCompletedTrick = lastTrick;
     const finalTrickWinner = lastTrick.winner!;
     const finalTrickWinnerTeam = getTeamForSeat(finalTrickWinner);
     
@@ -695,6 +702,7 @@ export class GameEngine {
       success: true,
       trickComplete: true,
       trickWinner: finalTrickWinner,
+      completedTrick: lastTrick,
       newState: this.getGameState(currentPlayer.id),
     };
   }

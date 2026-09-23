@@ -4,42 +4,64 @@ import { getValidBids } from '@shared/utils/bid';
 import { DEFAULT_GAME_RULES } from '@shared/constants/gameRules';
 
 const BiddingPanel: React.FC = () => {
-  const { gameState, placeBid, passBid } = useGameStore();
+  const { gameState, playerId, placeBid, passBid } = useGameStore();
 
   if (!gameState || gameState.highestBid === undefined) return null;
 
   const validBids = getValidBids(gameState.highestBid, gameState.settings || DEFAULT_GAME_RULES);
 
-  return (
-    <div className="bidding-panel">
-      <h3 className="gold-text">Place Your Bid</h3>
-      <p className="current-highest">
-        Current Highest:{' '}
-        <strong style={{ color: 'var(--gold-light)' }}>
-          {gameState.highestBid ? `${gameState.highestBid} pts` : 'No bids yet (Min 16)'}
-        </strong>
-      </p>
+  const currentPlayer =
+    gameState.players.find((p) => p.id === playerId) ||
+    gameState.players.find((p) => !p.isBot) ||
+    gameState.players[0];
 
-      <div className="bid-buttons">
-        {validBids.map((bid) => (
-          <button
-            key={bid}
-            className="btn-chip"
-            onClick={() => placeBid(bid)}
-            title={`Bid ${bid} points`}
-          >
-            {bid}
-          </button>
-        ))}
+  // Calculate current player's initial hand points
+  const handPoints = (currentPlayer?.hand || []).reduce(
+    (acc, card) => acc + (card.pointValue || 0),
+    0
+  );
+
+  return (
+    <div className="bidding-dock-modern">
+      <div className="bidding-dock-header">
+        <div className="bidding-status-info">
+          <span className="bidding-title">YOUR TURN TO BID</span>
+          <span className="bidding-highest-text">
+            Highest:{' '}
+            <strong className="gold-text">
+              {gameState.highestBid ? `${gameState.highestBid} pts` : 'None (Min 16)'}
+            </strong>
+          </span>
+        </div>
+
+        <div className="bidding-hand-power" title="Total point value of your 4 cards">
+          <span className="hand-power-label">Your Hand:</span>
+          <span className="hand-power-val">{handPoints} pts</span>
+        </div>
       </div>
 
-      <button
-        className="btn btn-pass"
-        onClick={() => passBid()}
-        style={{ width: '100%', marginTop: '0.4rem', padding: '0.75rem' }}
-      >
-        PASS BID
-      </button>
+      <div className="bidding-controls-row">
+        <div className="bid-chips-scroller">
+          {validBids.map((bid) => (
+            <button
+              key={bid}
+              className="btn-bid-chip"
+              onClick={() => placeBid(bid)}
+              title={`Bid ${bid} points`}
+            >
+              {bid}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="btn-bid-pass"
+          onClick={() => passBid()}
+          title="Pass this bidding round"
+        >
+          PASS
+        </button>
+      </div>
     </div>
   );
 };

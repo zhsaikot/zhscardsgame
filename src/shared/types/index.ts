@@ -93,6 +93,7 @@ export interface GameState {
   leadSuit: Suit | null;
   currentTrick: Trick | null;
   completedTricks: Trick[];
+  lastCompletedTrick?: Trick | null;
   teamPoints: { A: number; B: number };
   winningTeam?: Team | null;
   contractResult?: 'success' | 'failure' | null;
