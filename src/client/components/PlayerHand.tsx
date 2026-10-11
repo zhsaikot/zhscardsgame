@@ -19,24 +19,9 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
   const { gameState, playCard, selectedCard, setSelectedCard } = useGameStore();
 
   const isBiddingPhase = gameState?.phase === 'BIDDING';
+  const isPlayingPhase = gameState?.phase === 'PLAYING';
 
-  const handleCardClick = (card: Card) => {
-    if (!isCurrentTurn) return;
-
-    const isLegal = getLegalCards().includes(card.id);
-    if (!isLegal) return;
-
-    if (selectedCard?.id === card.id) {
-      // Play the card immediately
-      playCard(card.id);
-      setSelectedCard(null);
-    } else {
-      // Select the card
-      setSelectedCard(card);
-    }
-  };
-
-  // Determine which cards are legal to play
+  // Determine legal cards to play
   const getLegalCards = () => {
     if (!leadSuit) return hand.map((c) => c.id);
 
@@ -47,48 +32,133 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
     return hand.map((c) => c.id);
   };
 
-  const legalCardIds = isCurrentTurn ? getLegalCards() : [];
+  const legalCardIds = isCurrentTurn && isPlayingPhase ? getLegalCards() : [];
+
+  const handleCardClick = (card: Card) => {
+    if (!isCurrentTurn && !isBiddingPhase) return;
+
+    if (isPlayingPhase && isCurrentTurn) {
+      const isLegal = legalCardIds.includes(card.id);
+      if (!isLegal) return;
+
+      if (selectedCard?.id === card.id) {
+        // Double-click/second tap directly plays
+        playCard(card.id);
+        setSelectedCard(null);
+      } else {
+        setSelectedCard(card);
+      }
+    } else {
+      // Just select/inspect during bidding or waiting
+      setSelectedCard(selectedCard?.id === card.id ? null : card);
+    }
+  };
+
+  const handlePlaySelected = () => {
+    if (selectedCard && legalCardIds.includes(selectedCard.id)) {
+      playCard(selectedCard.id);
+      setSelectedCard(null);
+    }
+  };
+
+  const count = hand.length;
+  const centerIndex = (count - 1) / 2;
 
   return (
-    <div className="player-hand">
+    <div className="player-hand-wrapper">
+      {/* Floating Action / Turn Play Prompt Bar */}
+      <div className="hand-action-bar">
+        {isPlayingPhase && isCurrentTurn && (
+          <div className="hand-turn-banner animate-pulse">
+            <span className="turn-banner-bilingual">তোমার চাল / YOUR TURN</span>
+            {selectedCard && legalCardIds.includes(selectedCard.id) && (
+              <button
+                type="button"
+                className="btn-play-action-glow"
+                onClick={handlePlaySelected}
+              >
+                <span>PLAY</span>
+                <span className="play-card-spec">
+                  {selectedCard.rank}{SUIT_SYMBOLS[selectedCard.suit]}
+                </span>
+                <span className="play-bengali-sub">চাল দিন</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Lead Suit Reminder */}
+        {isPlayingPhase && isCurrentTurn && leadSuit && (
+          <div className="lead-suit-badge">
+            <span className="lead-suit-label">Must Follow:</span>
+            <span className={`lead-suit-val suit-${leadSuit}`}>
+              {SUIT_SYMBOLS[leadSuit]} {leadSuit.toUpperCase()}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Fan Arc Hand Cards */}
       {hand.length === 0 ? (
         <div className="empty-hand-notice">
-          <div className="loading-spinner mini" style={{ width: '20px', height: '20px', borderWidth: '2px' }} />
+          <div className="loading-spinner mini" />
           <span>Dealing cards...</span>
         </div>
       ) : (
-        <div className="hand-cards">
+        <div className="fan-hand-container">
           {hand.map((card, idx) => {
             const isSelected = selectedCard?.id === card.id;
             const isLegal = legalCardIds.includes(card.id);
-            const canPlay = isCurrentTurn && isLegal;
-            const hasPoint = card.pointValue > 0;
+            const canPlay = isPlayingPhase && isCurrentTurn && isLegal;
+            const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
+
+            // Parabolic fan geometry:
+            const offset = idx - centerIndex;
+            const rotateDeg = offset * 4.5;
+            const translateYPx = Math.abs(offset) * Math.abs(offset) * 2.2;
+
+            // When selected, card straightens and pops up:
+            const transformStyle = isSelected
+              ? 'translateY(-34px) scale(1.12) rotate(0deg)'
+              : `rotate(${rotateDeg}deg) translateY(${translateYPx}px)`;
 
             return (
               <div
                 key={card.id}
-                className={`card card-deal-anim ${isSelected ? 'selected' : ''} ${canPlay ? 'legal-move' : ''} ${!canPlay && isCurrentTurn ? 'disabled' : ''} ${isBiddingPhase ? 'bidding-view' : ''}`}
+                className={`fan-card-item ${isSelected ? 'is-selected' : ''} ${
+                  canPlay ? 'can-play' : ''
+                } ${!canPlay && isCurrentTurn && isPlayingPhase ? 'is-disabled' : ''} ${
+                  isRed ? 'red-suit' : 'black-suit'
+                }`}
+                style={{
+                  transform: transformStyle,
+                  zIndex: isSelected ? 50 : 10 + idx,
+                }}
                 onClick={() => handleCardClick(card)}
                 data-rank={card.rank}
                 data-suit={card.suit}
-                style={{ animationDelay: `${idx * 60}ms` }}
-                title={canPlay ? `Play ${card.rank} of ${card.suit}` : `${card.rank} of ${card.suit} (${card.pointValue} pts)`}
+                title={`${card.rank} of ${card.suit} (${card.pointValue} pts)`}
               >
-                {/* Point badge during bidding or inspection */}
-                {isBiddingPhase && (
-                  <div className={`card-point-pill ${hasPoint ? 'valuable' : 'zero'}`}>
-                    {card.pointValue > 0 ? `+${card.pointValue}` : '0'}
+                {/* Point badge visible during bidding & play */}
+                {card.pointValue > 0 && (
+                  <div className="fan-card-point-badge">
+                    +{card.pointValue}
                   </div>
                 )}
 
                 <div className="card-face">
+                  {/* Top-Left Corner */}
                   <div className="card-corner top-left">
                     <span className="rank">{card.rank}</span>
                     <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
                   </div>
+
+                  {/* Large Center Suit Symbol */}
                   <div className="card-center">
                     <span className="suit-symbol large">{SUIT_SYMBOLS[card.suit]}</span>
                   </div>
+
+                  {/* Bottom-Right Corner */}
                   <div className="card-corner bottom-right">
                     <span className="rank">{card.rank}</span>
                     <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
@@ -99,30 +169,6 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
           })}
         </div>
       )}
-
-      <div className="hand-hints-row">
-        {isCurrentTurn && selectedCard && legalCardIds.includes(selectedCard.id) && (
-          <button
-            className="btn-play-action"
-            onClick={() => {
-              playCard(selectedCard.id);
-              setSelectedCard(null);
-            }}
-          >
-            ▶ Play {selectedCard.rank}{SUIT_SYMBOLS[selectedCard.suit]}
-          </button>
-        )}
-        {isCurrentTurn && selectedCard && (
-          <div className="play-hint">
-            Tap card again to play
-          </div>
-        )}
-        {isCurrentTurn && leadSuit && (
-          <div className="lead-suit-info">
-            Must follow suit: {SUIT_SYMBOLS[leadSuit]} {leadSuit}
-          </div>
-        )}
-      </div>
     </div>
   );
 };

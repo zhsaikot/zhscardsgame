@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
 import type { GameState, Player, Card, Suit, Trick } from '@shared/types';
+import { getSavedAvatar } from '../utils/avatar';
 
 export interface TrickCelebration {
   winnerSeat: number;
@@ -16,6 +17,7 @@ interface GameStore {
   gameState: GameState | null;
   playerId: string | null;
   username: string | null;
+  avatar: string | null;
   gameId: string | null;
   selectedCard: Card | null;
   error: string | null;
@@ -24,9 +26,10 @@ interface GameStore {
   // Actions
   connect: (url?: string) => void;
   disconnect: () => void;
-  createGame: (username: string) => Promise<string>;
-  startSoloGame: (username: string) => Promise<string>;
-  joinGame: (gameId: string, username: string) => Promise<void>;
+  setAvatar: (avatar: string) => void;
+  createGame: (username: string, avatar?: string) => Promise<string>;
+  startSoloGame: (username: string, avatar?: string) => Promise<string>;
+  joinGame: (gameId: string, username: string, avatar?: string) => Promise<void>;
   leaveGame: () => void;
   setReady: (ready: boolean) => void;
   placeBid: (amount: number) => void;
@@ -45,10 +48,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   gameState: null,
   playerId: null,
   username: null,
+  avatar: getSavedAvatar(),
   gameId: null,
   selectedCard: null,
   error: null,
   trickCelebration: null,
+
+  setAvatar: (avatar: string) => set({ avatar }),
 
   connect: (url?: string) => {
     const defaultUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -216,24 +222,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
   },
 
-  createGame: async (username: string): Promise<string> => {
-    const { socket } = get();
+  createGame: async (username: string, avatar?: string): Promise<string> => {
+    const { socket, avatar: storeAvatar } = get();
     
     if (!socket) {
       throw new Error('Not connected to server');
     }
 
     const playerId = `player_${Date.now()}`;
+    const finalAvatar = avatar || storeAvatar || getSavedAvatar();
     
     return new Promise((resolve, reject) => {
       socket.emit('game:join', { 
         gameId: `game_${Date.now()}`, 
         playerId, 
-        username 
+        username,
+        avatar: finalAvatar,
       });
       
       // Store player info
-      set({ playerId, username });
+      set({ playerId, username, avatar: finalAvatar });
       
       // Listen for response
       socket.once('player:joined', (data: { gameId?: string }) => {
@@ -252,22 +260,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  startSoloGame: async (username: string): Promise<string> => {
-    const { socket } = get();
+  startSoloGame: async (username: string, avatar?: string): Promise<string> => {
+    const { socket, avatar: storeAvatar } = get();
 
     if (!socket) {
       throw new Error('Not connected to server');
     }
 
     const playerId = `player_${Date.now()}`;
+    const finalAvatar = avatar || storeAvatar || getSavedAvatar();
 
     return new Promise((resolve, reject) => {
       socket.emit('game:startSolo', {
         playerId,
         username,
+        avatar: finalAvatar,
       });
 
-      set({ playerId, username });
+      set({ playerId, username, avatar: finalAvatar });
 
       socket.once('player:joined', (data: { gameId?: string }) => {
         if (data.gameId) {
@@ -284,19 +294,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  joinGame: async (gameId: string, username: string): Promise<void> => {
-    const { socket } = get();
+  joinGame: async (gameId: string, username: string, avatar?: string): Promise<void> => {
+    const { socket, avatar: storeAvatar } = get();
     
     if (!socket) {
       throw new Error('Not connected to server');
     }
 
     const playerId = `player_${Date.now()}`;
+    const finalAvatar = avatar || storeAvatar || getSavedAvatar();
     
     return new Promise((resolve, reject) => {
-      socket.emit('game:join', { gameId, playerId, username });
+      socket.emit('game:join', { gameId, playerId, username, avatar: finalAvatar });
       
-      set({ playerId, username, gameId });
+      set({ playerId, username, gameId, avatar: finalAvatar });
       
       socket.once('player:joined', () => {
         resolve();

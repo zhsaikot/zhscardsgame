@@ -157,8 +157,8 @@ export function setupSocketHandlers(io: Server): void {
     /**
      * Start a Single Player / Solo game with 3 AI Bots
      */
-    socket.on('game:startSolo', (data: { playerId: string; username: string }) => {
-      const { playerId, username } = data;
+    socket.on('game:startSolo', (data: { playerId: string; username: string; avatar?: string }) => {
+      const { playerId, username, avatar } = data;
       const gameService = GameService.getInstance();
       const gameId = gameService.createGame();
       const engine = gameService.getGame(gameId);
@@ -169,7 +169,7 @@ export function setupSocketHandlers(io: Server): void {
       }
 
       // Add human player to Seat 1
-      engine.addPlayer(playerId, username, socket.id, false);
+      engine.addPlayer(playerId, username, socket.id, false, avatar);
       engine.setReady(playerId, true);
 
       // Fill remaining seats (2, 3, 4) with AI Bots
@@ -207,18 +207,23 @@ export function setupSocketHandlers(io: Server): void {
     /**
      * Join a multiplayer game room
      */
-    socket.on('game:join', (data: { gameId: string; playerId: string; username: string }) => {
-      const { gameId, playerId, username } = data;
+    socket.on('game:join', (data: { gameId: string; playerId: string; username: string; avatar?: string }) => {
+      const { gameId, playerId, username, avatar } = data;
       const gameService = GameService.getInstance();
-      const engine = gameService.getGame(gameId);
+      let engine = gameService.getGame(gameId);
 
       if (!engine) {
-        socket.emit('error', { message: 'Game not found' });
+        gameService.createGame(undefined, gameId);
+        engine = gameService.getGame(gameId);
+      }
+
+      if (!engine) {
+        socket.emit('error', { message: 'Could not create or find game' });
         return;
       }
 
       // Add player to game
-      const result = engine.addPlayer(playerId, username, socket.id, false);
+      const result = engine.addPlayer(playerId, username, socket.id, false, avatar);
 
       if (!result.success) {
         socket.emit('error', { message: result.error });

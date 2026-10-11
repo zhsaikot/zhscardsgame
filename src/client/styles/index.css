@@ -1872,3 +1872,1621 @@ body {
   }
 }
 
+
+
+/* ==========================================================================
+   REVAMPED ROYAL 29 CARD ROOM - REFERENCE MATCH STYLES
+   - Curved Notch Stadium Top Header
+   - Golden Wood & Brass Stadium Rim
+   - Circular Gold Avatar Pods with "তোমার চাল" Turn Badge
+   - Upright Center Trick with 3 pts, 2 pts, 1 pt Badges
+   - Fan-Out Curved Hand Cards
+   - 4x3 Grid Bidding Panel
+   - Desktop 3-Column Layout & Mobile Full View
+   - Avatar Picker Modal & Custom Photo Uploader
+   ========================================================================== */
+
+/* Main Stadium Viewport with Royal Damask Emerald Wallpaper */
+.stadium-viewport {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: #051410;
+  background-image: 
+    radial-gradient(ellipse at 50% 20%, rgba(16, 52, 41, 0.8) 0%, transparent 70%),
+    radial-gradient(circle at 25px 25px, rgba(52, 211, 153, 0.04) 2%, transparent 0%),
+    radial-gradient(circle at 75px 75px, rgba(212, 175, 55, 0.04) 2%, transparent 0%);
+  background-size: 100% 100%, 100px 100px, 100px 100px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Top Stadium Curved Notch Header
+   -------------------------------------------------------------------------- */
+.stadium-notch-header {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  position: relative;
+  z-index: 50;
+  gap: 0.8rem;
+}
+
+/* Left Branding & Target Column */
+.notch-left-branding {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.6rem;
+  flex-shrink: 0;
+}
+
+.brand-logo-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.brand-bengali-numeral,
+.brand-english-numeral {
+  font-size: 1.6rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fef08a 0%, #d4af37 60%, #b45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.brand-dash {
+  font-size: 1.2rem;
+  color: #d4af37;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.brand-target-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(4, 15, 11, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.target-lbl {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.target-val {
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #ffd700;
+}
+
+/* Center Hanging Curved Notch */
+.curved-center-notch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  background: linear-gradient(180deg, #091c16 0%, #030f0a 100%);
+  border: 2px solid #d4af37;
+  border-top: none;
+  border-bottom-left-radius: 26px;
+  border-bottom-right-radius: 26px;
+  padding: 0.45rem 1.6rem 0.65rem 1.6rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(212, 175, 55, 0.4);
+  position: relative;
+  z-index: 52;
+}
+
+.notch-team-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 78px;
+}
+
+.notch-team-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.team-a-dot { color: #34d399; }
+.team-b-dot { color: #f87171; }
+
+.notch-team-points {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.notch-team-match-score {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.notch-team-bid-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #ffd700;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-top: 2px;
+}
+
+/* Center Trump Showcase Badge */
+.notch-trump-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #061711;
+  border: 1.5px solid #d4af37;
+  border-radius: 8px;
+  padding: 3px 8px;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+}
+
+.notch-trump-banner {
+  margin-bottom: 2px;
+}
+
+.trump-bilingual-title {
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.06em;
+}
+
+.notch-trump-card-slot {
+  width: 38px;
+  height: 52px;
+  background: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+
+.notch-trump-card-back {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notch-trump-question {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #ffd700;
+}
+
+.notch-trump-card-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+}
+
+.notch-trump-suit-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.notch-trump-card-face.suit-hearts,
+.notch-trump-card-face.suit-diamonds {
+  color: #e11d48;
+}
+
+.notch-trump-card-face.suit-spades,
+.notch-trump-card-face.suit-clubs {
+  color: #0f172a;
+}
+
+.notch-trump-suit-name {
+  font-size: 0.55rem;
+  font-weight: 800;
+  margin-top: 1px;
+}
+
+.notch-trump-card-empty {
+  font-size: 1.4rem;
+  color: #cbd5e1;
+}
+
+/* Right Circular Controls */
+.notch-right-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-top: 0.6rem;
+  flex-shrink: 0;
+}
+
+.circle-gold-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a1a0d 0%, #120a04 100%);
+  border: 2px solid #d4af37;
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.circle-gold-btn:hover {
+  transform: scale(1.12);
+  border-color: #fef08a;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.7);
+}
+
+.circle-gold-btn.exit-btn:hover {
+  border-color: #ef4444;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   3-Column Layout: Scoreboard Left, Table Center, Bidding/Chat Right
+   -------------------------------------------------------------------------- */
+.stadium-three-columns {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  padding: 0.4rem 1.25rem 1rem 1.25rem;
+  gap: 1.25rem;
+  align-items: stretch;
+  max-width: 1620px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Left Scoreboard Sidebar */
+.desktop-scoreboard-card {
+  width: 250px;
+  flex-shrink: 0;
+  background: rgba(6, 20, 16, 0.9);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.side-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.side-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.side-sub-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(212, 175, 55, 0.15);
+  color: #ffd700;
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+
+.scoreboard-teams-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.team-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.team-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.team-scores {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.current-pts {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.total-match-pts {
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.scoreboard-contract-box {
+  background: rgba(4, 14, 11, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 10px;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.contract-header {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contract-info-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.points-cheat-sheet {
+  margin-top: auto;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cheat-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cheat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.cheat-item {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fef08a;
+  background: rgba(212, 175, 55, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Center Column: The Stadium Rounded Felt Arena */
+.stadium-center-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  min-width: 0;
+}
+
+.felt-stadium-rim {
+  width: 100%;
+  max-width: 960px;
+  height: min(58vh, 500px);
+  min-height: 380px;
+  border-radius: 200px;
+  background: linear-gradient(135deg, #2b170e 0%, #170d08 45%, #2b170e 100%);
+  padding: 12px;
+  border: 3px solid #6b4423;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(0, 0, 0, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+}
+
+.felt-stadium-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 188px;
+  background: radial-gradient(ellipse at center, #0f4a34 0%, #082d1f 60%, #031810 100%);
+  border: 2.5px solid #d4af37;
+  box-shadow: inset 0 0 55px rgba(0, 0, 0, 0.75), 0 0 15px rgba(212, 175, 55, 0.25);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.felt-center-watermark {
+  position: absolute;
+  font-size: 9rem;
+  font-weight: 900;
+  color: rgba(212, 175, 55, 0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Circular Player Pods */
+.stadium-player-pod {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 22;
+  transition: all 0.3s ease;
+}
+
+.pos-north { top: 10px; left: 50%; transform: translateX(-50%); }
+.pos-south { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.pos-west { left: 18px; top: 50%; transform: translateY(-50%); }
+.pos-east { right: 18px; top: 50%; transform: translateY(-50%); }
+
+.stadium-avatar-ring {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.45), 0 6px 14px rgba(0, 0, 0, 0.6);
+  position: relative;
+  background: #081a14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stadium-avatar-ring.is-me-clickable {
+  cursor: pointer;
+}
+
+.stadium-avatar-ring.is-me-clickable:hover {
+  transform: scale(1.08);
+  border-color: #fef08a;
+  box-shadow: 0 0 22px rgba(254, 240, 138, 0.7);
+}
+
+.stadium-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stadium-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #092019;
+  border: 1.5px solid #d4af37;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+/* Active Turn Pill "তোমার চাল" */
+.active-turn-pill {
+  position: absolute;
+  top: -24px;
+  background: linear-gradient(135deg, #00d293 0%, #059669 100%);
+  color: #041c13;
+  font-weight: 800;
+  font-size: 0.65rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(0, 210, 147, 0.7);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 25;
+  border: 1px solid #a7f3d0;
+}
+
+.turn-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: pulseDot 1s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.stadium-player-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 3px;
+}
+
+.player-name-chip {
+  background: rgba(4, 15, 11, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 8px;
+  padding: 1px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.player-alias-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f8fafc;
+  max-width: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bot-chip {
+  font-size: 0.55rem;
+  font-weight: 800;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.player-team-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+}
+
+.player-hand-backs {
+  display: flex;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.mini-card-back-chip {
+  width: 6px;
+  height: 10px;
+  background: linear-gradient(135deg, #1e3a8a, #0f172a);
+  border: 0.5px solid #d4af37;
+  border-radius: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   Center Trick Stage & Upright Standing Cards (3 pts, 2 pts, 1 pt Badges)
+   -------------------------------------------------------------------------- */
+.center-trick-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  z-index: 15;
+}
+
+.trick-status-badge {
+  margin-bottom: 2px;
+}
+
+.trick-pot-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(4, 14, 10, 0.85);
+  border: 1px solid rgba(0, 210, 147, 0.4);
+  padding: 3px 12px;
+  border-radius: 14px;
+}
+
+.pot-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.pot-value {
+  font-size: 0.75rem;
+  color: #6ee7b7;
+}
+
+.trick-winner-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #2e1065, #581c87);
+  border: 1.5px solid #fef08a;
+  padding: 4px 14px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(254, 240, 138, 0.45);
+}
+
+.trophy-icon { font-size: 1rem; }
+.winner-lead { font-size: 0.78rem; font-weight: 800; color: #ffd700; }
+.winner-pts-pill {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #10b981;
+  color: #041c13;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.trick-cards-stand {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  min-height: 115px;
+}
+
+.empty-trick-stand {
+  padding: 1rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.standing-trick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.standing-trick-card:hover {
+  transform: translateY(-8px);
+}
+
+.standing-trick-card.is-winner-card {
+  transform: translateY(-10px) scale(1.08);
+}
+
+.card-face.mini-upright {
+  width: 58px;
+  height: 84px;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+  border: 1.5px solid #d4af37;
+  padding: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.standing-trick-card.red-suit .card-face.mini-upright { color: #e11d48; }
+.standing-trick-card.black-suit .card-face.mini-upright { color: #0f172a; }
+
+.card-win-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  background: #ffd700;
+  color: #041c13;
+  font-weight: 900;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Point Value Badges Underneath Card (3 pts, 2 pts, 1 pt, 0 pts) */
+.card-points-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.badge-has-pts {
+  background: linear-gradient(135deg, #d4af37 0%, #b45309 100%);
+  color: #041c13;
+  border: 1px solid #fef08a;
+}
+
+.badge-zero-pts {
+  background: rgba(30, 41, 59, 0.85);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-player-tag {
+  font-size: 0.6rem;
+  color: #f1f5f9;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 1px 6px;
+  border-radius: 4px;
+  max-width: 65px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Curved Fan-Out Hand Cards & Glowing PLAY Button
+   -------------------------------------------------------------------------- */
+.stadium-hand-dock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 30;
+  margin-top: auto;
+}
+
+.player-hand-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hand-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 0.2rem;
+  min-height: 42px;
+}
+
+.hand-turn-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.turn-banner-bilingual {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #6ee7b7;
+  text-shadow: 0 0 10px rgba(0, 210, 147, 0.6);
+}
+
+.btn-play-action-glow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #00d293 0%, #059669 100%);
+  color: #041c13;
+  font-weight: 900;
+  font-size: 0.95rem;
+  padding: 0.45rem 1.4rem;
+  border-radius: 24px;
+  border: 1.5px solid #a7f3d0;
+  box-shadow: 0 0 22px rgba(0, 210, 147, 0.75), 0 4px 12px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-play-action-glow:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(0, 210, 147, 0.95);
+}
+
+.play-card-spec {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.play-bengali-sub {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.lead-suit-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(4, 15, 11, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+}
+
+.lead-suit-label {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.lead-suit-val {
+  font-weight: 800;
+}
+
+.lead-suit-val.suit-hearts,
+.lead-suit-val.suit-diamonds { color: #f87171; }
+.lead-suit-val.suit-spades,
+.lead-suit-val.suit-clubs { color: #f1f5f9; }
+
+/* Fan Arc Layout */
+.fan-hand-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0.8rem 1rem 0.4rem 1rem;
+  position: relative;
+  min-height: 125px;
+}
+
+.fan-card-item {
+  width: 72px;
+  height: 106px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.65);
+  border: 1.5px solid #cbd5e1;
+  margin: 0 -13px;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+  position: relative;
+  user-select: none;
+  transform-origin: bottom center;
+}
+
+.fan-card-item:hover {
+  transform: translateY(-32px) scale(1.12) rotate(0deg) !important;
+  z-index: 60 !important;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.85), 0 0 18px rgba(212, 175, 55, 0.6) !important;
+  border-color: #d4af37 !important;
+}
+
+.fan-card-item.is-selected {
+  border: 2.5px solid #00d293 !important;
+  box-shadow: 0 0 24px rgba(0, 210, 147, 0.8), 0 16px 32px rgba(0, 0, 0, 0.85) !important;
+}
+
+.fan-card-item.can-play {
+  border-color: #6ee7b7;
+}
+
+.fan-card-item.is-disabled {
+  opacity: 0.55;
+  filter: grayscale(40%);
+}
+
+.fan-card-item.red-suit { color: #e11d48; }
+.fan-card-item.black-suit { color: #0f172a; }
+
+.fan-card-point-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #d4af37;
+  color: #0f172a;
+  font-size: 0.62rem;
+  font-weight: 800;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+/* --------------------------------------------------------------------------
+   4x3 Grid Bidding Panel (16 to 28, PASS and BID Actions)
+   -------------------------------------------------------------------------- */
+.bidding-panel-card {
+  background: rgba(7, 22, 17, 0.94);
+  backdrop-filter: blur(16px);
+  border: 2px solid #d4af37;
+  border-radius: 16px;
+  padding: 0.9rem;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75), 0 0 20px rgba(212, 175, 55, 0.25);
+  width: 100%;
+}
+
+.bidding-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.bidding-title-text {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.bidding-sub-text {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  display: block;
+}
+
+.bidding-hand-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.hand-chip-lbl { font-size: 0.62rem; color: #94a3b8; }
+.hand-chip-val { font-size: 0.78rem; font-weight: 800; color: #6ee7b7; }
+
+.bidding-grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 0.6rem 0;
+}
+
+.bid-number-btn {
+  height: 38px;
+  border-radius: 8px;
+  background: #081f18;
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bid-number-btn.is-valid:hover {
+  background: linear-gradient(135deg, #00d293, #059669);
+  color: #041c13;
+  border-color: #6ee7b7;
+  transform: scale(1.06);
+  box-shadow: 0 0 12px rgba(0, 210, 147, 0.6);
+}
+
+.bid-number-btn.is-current-highest {
+  border-color: #ffd700;
+  background: rgba(212, 175, 55, 0.2);
+  color: #fef08a;
+}
+
+.bid-number-btn.is-disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #04120e;
+}
+
+.bidding-bottom-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+
+.btn-bid-pass-action {
+  background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+  border: 1.5px solid #ef4444;
+  border-radius: 10px;
+  color: #fee2e2;
+  padding: 0.45rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-bid-pass-action:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+}
+
+.btn-bid-double-action {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  border: 1.5px solid #60a5fa;
+  border-radius: 10px;
+  color: #eff6ff;
+  padding: 0.45rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-bid-double-action:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 0 14px rgba(96, 165, 250, 0.5);
+}
+
+.btn-bid-double-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.action-main {
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.action-sub {
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+/* Mobile Floating Bidding Dock */
+.mobile-bidding-floating-dock {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94vw, 360px);
+  z-index: 45;
+}
+
+/* --------------------------------------------------------------------------
+   Desktop Right Column: Live Table Chat & Move Log
+   -------------------------------------------------------------------------- */
+.desktop-right-panel {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.desktop-bidding-wrapper {
+  width: 100%;
+}
+
+.game-chat-card {
+  flex: 1;
+  background: rgba(6, 20, 16, 0.9);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
+  border-radius: 16px;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  min-height: 240px;
+}
+
+.live-indicator {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.chat-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0.6rem 0;
+  padding-right: 4px;
+}
+
+.chat-bubble {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-bubble.system-msg {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.2);
+}
+
+.chat-bubble.my-msg {
+  background: rgba(0, 210, 147, 0.12);
+  border-color: rgba(0, 210, 147, 0.25);
+  align-self: flex-end;
+}
+
+.chat-sender {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.chat-text {
+  color: #f1f5f9;
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.chat-field {
+  flex: 1;
+  background: #04120e;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  color: #f8fafc;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.chat-field:focus {
+  border-color: #00d293;
+}
+
+.btn-chat-send {
+  background: linear-gradient(135deg, #00d293, #059669);
+  color: #041c13;
+  border: none;
+  border-radius: 8px;
+  padding: 0 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Avatar Picker Modal & Lobby Avatar Styles
+   -------------------------------------------------------------------------- */
+.lobby-avatar-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(6, 20, 16, 0.65);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lobby-avatar-banner:hover {
+  background: rgba(10, 32, 25, 0.85);
+  border-color: #d4af37;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+}
+
+.lobby-avatar-pod {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #d4af37;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.lobby-avatar-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.lobby-avatar-edit-icon {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #092019;
+  border: 1px solid #d4af37;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lobby-avatar-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.lobby-avatar-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.05em;
+}
+
+.lobby-avatar-sub {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+/* Modal Content for Avatar Selection */
+.avatar-modal-box {
+  background: rgba(8, 24, 19, 0.98);
+  border: 2px solid #d4af37;
+  border-radius: 18px;
+  padding: 1.4rem;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+.avatar-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.btn-close-modal {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-close-modal:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.avatar-preview-section {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.avatar-preview-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-upload-action {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.btn-upload-photo {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 1.5px solid #38bdf8;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-upload-photo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+}
+
+.upload-hint {
+  font-size: 0.62rem;
+  color: #94a3b8;
+}
+
+.avatar-error-msg {
+  background: rgba(225, 29, 72, 0.2);
+  border: 1px solid #be123c;
+  color: #fecdd3;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  margin-bottom: 0.8rem;
+}
+
+.avatar-grid-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+}
+
+.demo-avatars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 1.2rem;
+}
+
+.demo-avatar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #061711;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.demo-avatar-card:hover {
+  border-color: #d4af37;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.demo-avatar-card.chosen {
+  border-color: #00d293;
+  background: rgba(0, 210, 147, 0.12);
+  box-shadow: 0 0 14px rgba(0, 210, 147, 0.4);
+}
+
+.demo-avatar-img-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.demo-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.demo-avatar-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  text-align: center;
+}
+
+.demo-avatar-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #00d293;
+  color: #041c13;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
+
+.btn-modal-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+/* Settings Modal */
+.settings-list-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints: Desktop Widescreen vs Mobile Table
+   -------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .desktop-scoreboard-card,
+  .desktop-right-panel {
+    display: none;
+  }
+
+  .stadium-three-columns {
+    padding: 0.2rem 0.5rem 0.8rem 0.5rem;
+  }
+
+  .felt-stadium-rim {
+    width: 98vw;
+    height: 52vh;
+    min-height: 330px;
+    border-radius: 120px;
+    padding: 8px;
+  }
+
+  .felt-stadium-inner {
+    border-radius: 110px;
+  }
+}
+
+@media (max-width: 720px) {
+  .stadium-notch-header {
+    padding: 0 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .brand-logo-row {
+    font-size: 1.25rem;
+  }
+
+  .curved-center-notch {
+    padding: 0.3rem 0.8rem 0.45rem 0.8rem;
+    gap: 0.6rem;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+  }
+
+  .notch-team-box {
+    min-width: 55px;
+  }
+
+  .notch-team-points {
+    font-size: 1.05rem;
+  }
+
+  .circle-gold-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+
+  .stadium-avatar-ring {
+    width: 46px;
+    height: 46px;
+  }
+
+  .pos-north { top: 6px; }
+  .pos-south { bottom: 6px; }
+  .pos-west { left: 8px; }
+  .pos-east { right: 8px; }
+
+  .fan-card-item {
+    width: 52px;
+    height: 78px;
+    margin: 0 -8px;
+  }
+
+  .card-face.mini-upright {
+    width: 44px;
+    height: 64px;
+  }
+
+  .felt-stadium-rim {
+    height: 46vh;
+    min-height: 290px;
+    border-radius: 80px;
+  }
+
+  .felt-stadium-inner {
+    border-radius: 72px;
+  }
+}

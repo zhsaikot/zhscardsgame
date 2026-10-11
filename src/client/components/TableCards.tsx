@@ -12,7 +12,6 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
 
   if (!gameState) return null;
 
-  // Use celebration trick if active, otherwise current trick
   const isCelebrating = !!trickCelebration && !!trickCelebration.trick;
   const activeTrick = isCelebrating
     ? trickCelebration.trick
@@ -22,81 +21,103 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
   const points = activeTrick?.points || 0;
   const trickNum = (gameState.completedTricks?.length || 0) + (isCelebrating ? 0 : 1);
 
-  // Map seat number to spatial position relative to local player (South)
-  const getDirectionClass = (seat: number) => {
-    const diff = (seat - mySeat + 4) % 4;
-    switch (diff) {
-      case 0: return 'play-from-south';
-      case 1: return 'play-from-west';
-      case 2: return 'play-from-north';
-      case 3: return 'play-from-east';
-      default: return 'play-from-south';
-    }
+  // Seat label helper
+  const getPlayerLabel = (seat: number) => {
+    if (seat === mySeat) return 'You (আপনি)';
+    const player = gameState.players.find((p) => p.seat === seat);
+    return player?.username || `Seat ${seat}`;
   };
 
-  const getPlayerLabel = (seat: number) => {
-    if (seat === mySeat) return 'You';
-    const player = gameState.players.find((p) => p.seat === seat);
-    return player?.username || `P${seat}`;
+  // Point badge formatter
+  const formatCardPoints = (pts: number) => {
+    if (pts === 1) return '1 pt';
+    return `${pts} pts`;
   };
 
   return (
-    <div className={`trick-arena ${isCelebrating ? 'celebration-mode' : ''}`}>
-      {/* Center Pot Chip / Winner Banner */}
-      {isCelebrating ? (
-        <div className="trick-winner-banner animate-pop">
-          <div className="winner-crown">👑</div>
-          <div className="winner-name-text">
-            {trickCelebration.playerName} won!
+    <div className={`center-trick-stage ${isCelebrating ? 'is-celebrating' : ''}`}>
+      {/* Center Trick Status Header */}
+      <div className="trick-status-badge">
+        {isCelebrating ? (
+          <div className="trick-winner-pill animate-pop">
+            <span className="trophy-icon">👑</span>
+            <span className="winner-lead">
+              {trickCelebration.playerName} won the trick!
+            </span>
+            <span className="winner-pts-pill">+{trickCelebration.points} pts</span>
           </div>
-          <div className="winner-pts-text">
-            +{trickCelebration.points} pts
+        ) : (
+          <div className="trick-pot-pill">
+            <span className="pot-title">TRICK {Math.min(trickNum, 8)}/8</span>
+            {plays.length > 0 && (
+              <span className="pot-value">
+                Points: <strong>{points}</strong>
+              </span>
+            )}
           </div>
-        </div>
-      ) : (
-        <div className="trick-pot-chip">
-          <span className="trick-pot-label">
-            {plays.length > 0 ? 'Trick Points' : 'Trick'}
-          </span>
-          <span className="trick-pot-val">
-            {plays.length > 0 ? points : `${Math.min(trickNum, 8)}/8`}
-          </span>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Spatially positioned played cards */}
-      {plays.map((play: { card: Card; seat: number; playerId?: string }, index: number) => {
-        const dirClass = getDirectionClass(play.seat);
-        const isWinner = isCelebrating && trickCelebration.winnerSeat === play.seat;
-        const suit = play.card.suit as Suit;
-
-        return (
-          <div
-            key={`${play.card.id}-${index}`}
-            className={`trick-play ${dirClass} ${isWinner ? 'winner-card' : ''} slide-in-play`}
-          >
-            <div className="card mini" data-suit={suit}>
-              {isWinner && <div className="card-winner-tag">WIN</div>}
-              <div className="card-face">
-                <div className="card-corner top-left">
-                  <span className="rank">{play.card.rank}</span>
-                  <span className="suit-symbol">{SUIT_SYMBOLS[suit]}</span>
-                </div>
-                <div className="card-center">
-                  <span className="suit-symbol large">{SUIT_SYMBOLS[suit]}</span>
-                </div>
-                <div className="card-corner bottom-right">
-                  <span className="rank">{play.card.rank}</span>
-                  <span className="suit-symbol">{SUIT_SYMBOLS[suit]}</span>
-                </div>
-              </div>
-            </div>
-            <span className={`play-seat-tag ${isWinner ? 'winner-tag' : ''}`}>
-              {getPlayerLabel(play.seat)}
+      {/* Cards Played in Center Side-by-Side Standings */}
+      <div className="trick-cards-stand">
+        {plays.length === 0 ? (
+          <div className="empty-trick-stand">
+            <span className="stand-lead-prompt">
+              {gameState.phase === 'PLAYING'
+                ? 'Lead the first card of the trick'
+                : 'Waiting for trick play...'}
             </span>
           </div>
-        );
-      })}
+        ) : (
+          plays.map((play: { card: Card; seat: number; playerId?: string }, index: number) => {
+            const isWinner = isCelebrating && trickCelebration.winnerSeat === play.seat;
+            const suit = play.card.suit as Suit;
+            const isRed = suit === 'hearts' || suit === 'diamonds';
+
+            return (
+              <div
+                key={`${play.card.id}-${index}`}
+                className={`standing-trick-card ${isWinner ? 'is-winner-card' : ''} ${
+                  isRed ? 'red-suit' : 'black-suit'
+                } animate-card-drop`}
+              >
+                {/* Upright Card Surface */}
+                <div className="card-face mini-upright">
+                  <div className="card-corner top-left">
+                    <span className="rank">{play.card.rank}</span>
+                    <span className="suit-symbol">{SUIT_SYMBOLS[suit]}</span>
+                  </div>
+
+                  <div className="card-center">
+                    <span className="suit-symbol large">{SUIT_SYMBOLS[suit]}</span>
+                  </div>
+
+                  <div className="card-corner bottom-right">
+                    <span className="rank">{play.card.rank}</span>
+                    <span className="suit-symbol">{SUIT_SYMBOLS[suit]}</span>
+                  </div>
+
+                  {isWinner && <div className="card-win-overlay">WIN</div>}
+                </div>
+
+                {/* Point Value Badge Underneath Card (Matching Reference 3 pts, 2 pts, 1 pt, 0 pts) */}
+                <div
+                  className={`card-points-badge ${
+                    play.card.pointValue > 0 ? 'badge-has-pts' : 'badge-zero-pts'
+                  }`}
+                >
+                  {formatCardPoints(play.card.pointValue)}
+                </div>
+
+                {/* Player Name Tag Underneath Point Badge */}
+                <div className="card-player-tag" title={getPlayerLabel(play.seat)}>
+                  {getPlayerLabel(play.seat)}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 };

@@ -23,8 +23,8 @@ export class GameService {
   /**
    * Creates a new game
    */
-  createGame(settings?: Partial<GameSettings>): string {
-    const gameId = this.generateGameId();
+  createGame(settings?: Partial<GameSettings>, customId?: string): string {
+    const gameId = customId || this.generateGameId();
     const engine = new GameEngine(gameId, settings);
     this.games.set(gameId, engine);
     console.log(`Game created: ${gameId}`);

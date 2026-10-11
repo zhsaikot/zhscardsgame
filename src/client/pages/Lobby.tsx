@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../game/useGameStore';
+import AvatarPickerModal from '../components/AvatarPickerModal';
+import { getSavedAvatar } from '../utils/avatar';
 
 // SVG Shield with Lion Crest (Team A)
 const LionShieldIcon = () => (
@@ -41,6 +43,8 @@ const Lobby: React.FC = () => {
   const { createGame, joinGame, startSoloGame } = useGameStore();
   const [username, setUsername] = useState('');
   const [gameIdInput, setGameIdInput] = useState('');
+  const [avatar, setAvatar] = useState<string>(getSavedAvatar());
+  const [showAvatarModal, setShowAvatarModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -50,7 +54,7 @@ const Lobby: React.FC = () => {
     setError('');
 
     try {
-      await startSoloGame(finalName);
+      await startSoloGame(finalName, avatar);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to launch solo match');
     } finally {
@@ -68,7 +72,7 @@ const Lobby: React.FC = () => {
     setError('');
 
     try {
-      await createGame(username.trim());
+      await createGame(username.trim(), avatar);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create table');
     } finally {
@@ -91,7 +95,7 @@ const Lobby: React.FC = () => {
     setError('');
 
     try {
-      await joinGame(gameIdInput.trim(), username.trim());
+      await joinGame(gameIdInput.trim(), username.trim(), avatar);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to join table');
     } finally {
@@ -127,6 +131,24 @@ const Lobby: React.FC = () => {
         {/* Main Card with sharp rectangular styling & subtle glowing border */}
         <div className="card-box-sleek">
           <div className="card-corner-badge">✦</div>
+
+          {/* Profile Avatar Selection Row */}
+          <div
+            className="lobby-avatar-banner"
+            onClick={() => setShowAvatarModal(true)}
+            title="Click to customize or upload your avatar"
+          >
+            <div className="lobby-avatar-pod">
+              <img src={avatar} alt="Profile Avatar" className="lobby-avatar-circle" />
+              <span className="lobby-avatar-edit-icon">📷</span>
+            </div>
+            <div className="lobby-avatar-meta">
+              <span className="lobby-avatar-title">YOUR PROFILE AVATAR / অ্যাভাটার</span>
+              <span className="lobby-avatar-sub">
+                Click to change or upload photo ✦
+              </span>
+            </div>
+          </div>
 
           {/* Alias Input */}
           <div className="input-group-sleek">
@@ -249,6 +271,18 @@ const Lobby: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Avatar Picker Modal */}
+      {showAvatarModal && (
+        <AvatarPickerModal
+          currentAvatar={avatar}
+          onSelect={(newAv) => {
+            setAvatar(newAv);
+            useGameStore.getState().setAvatar(newAv);
+          }}
+          onClose={() => setShowAvatarModal(false)}
+        />
+      )}
     </div>
   );
 };

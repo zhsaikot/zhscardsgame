@@ -24,6 +24,7 @@ import {
   getValidBids 
 } from '../../shared/utils/bid.js';
 import { ScoreEngine } from '../../shared/utils/score.js';
+import { getBotAvatar } from '../../shared/utils/avatar.js';
 import { 
   DEFAULT_GAME_RULES, 
   TEAM_ASSIGNMENTS, 
@@ -128,7 +129,8 @@ export class GameEngine {
     playerId: string, 
     username: string, 
     socketId?: string,
-    isBot: boolean = false
+    isBot: boolean = false,
+    avatar?: string
   ): { success: boolean; error?: string; seat?: number } {
     // Check if game is full
     if (this.gameState.players.length >= 4) {
@@ -155,6 +157,7 @@ export class GameEngine {
     const player: Player = {
       id: playerId,
       username,
+      avatar: avatar || (isBot ? getBotAvatar(seat) : undefined),
       seat,
       team,
       connected: true,
@@ -186,7 +189,7 @@ export class GameEngine {
       if (!this.gameState.players.some(p => p.seat === s)) {
         const botId = `bot_${s}_${Date.now()}`;
         const name = botNames[s] || `Bot ${s}`;
-        this.addPlayer(botId, name, undefined, true);
+        this.addPlayer(botId, name, undefined, true, getBotAvatar(s));
       }
     }
   }

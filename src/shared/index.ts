@@ -5,3 +5,4 @@ export * from './utils/deck.js';
 export * from './utils/trick.js';
 export * from './utils/bid.js';
 export * from './utils/score.js';
+export * from './utils/avatar.js';
