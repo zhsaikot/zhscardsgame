@@ -210,3 +210,4 @@ export function getBotAvatar(seat: number): string {
   if (seat === 4) return DEMO_AVATARS[1].svgDataUri;
   return DEMO_AVATARS[4].svgDataUri;
 }
+

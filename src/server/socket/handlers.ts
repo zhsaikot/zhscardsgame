@@ -119,7 +119,7 @@ function triggerBotTurn(io: Server, gameId: string, engine: GameEngine): void {
           gameState: newState,
         });
 
-        // 1.8-second celebration pause so all players can clearly see the 4th card played and who won
+        // 2.8-second celebration pause so all players can clearly see the 4th card, winner highlight, and flight animation
         setTimeout(() => {
           const freshState = engine.getGameState();
           if (freshState.phase === 'ROUND_COMPLETE') {
@@ -134,7 +134,7 @@ function triggerBotTurn(io: Server, gameId: string, engine: GameEngine): void {
             });
             setTimeout(() => triggerBotTurn(io, gameId, engine), 400);
           }
-        }, 1800);
+        }, 2800);
       } else {
         io.to(gameId).emit('turn:changed', {
           currentTurn: newState.currentTurn,
@@ -528,7 +528,7 @@ export function setupSocketHandlers(io: Server): void {
           gameState: state,
         });
 
-        // 1.8-second celebration pause so all players can clearly see the 4th card played and who won
+        // 2.8-second celebration pause so all players can clearly see the 4th card, winner highlight, and flight animation
         setTimeout(() => {
           const freshState = engine.getGameState();
           if (freshState.phase === 'ROUND_COMPLETE') {
@@ -543,7 +543,7 @@ export function setupSocketHandlers(io: Server): void {
             });
             setTimeout(() => triggerBotTurn(io, gameId, engine), 400);
           }
-        }, 1800);
+        }, 2800);
       } else {
         io.to(gameId).emit('turn:changed', {
           currentTurn: state.currentTurn,

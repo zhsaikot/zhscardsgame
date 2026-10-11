@@ -4,10 +4,12 @@ import type { GameState, Player, Card, Suit, Trick } from '@shared/types';
 import { getSavedAvatar } from '../utils/avatar';
 
 export interface TrickCelebration {
+  phase: 'announcing' | 'flying';
   winnerSeat: number;
   playerName: string;
   points: number;
   trick: Trick | null;
+  winningCard?: Card | null;
 }
 
 interface GameStore {
@@ -184,19 +186,38 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const playerName = winnerPlayer?.username || `Seat ${data.winner}`;
       const trickObj = data.completedTrick || data.gameState?.lastCompletedTrick || null;
       const points = trickObj?.points ?? 0;
+      const winningPlay = trickObj?.plays?.find((p: any) => p.seat === data.winner);
+      const winningCard = winningPlay?.card || null;
 
+      // Phase 1: Announcing & spotlighting the winner (0 to 1.5s)
       set({
         trickCelebration: {
+          phase: 'announcing',
           winnerSeat: data.winner,
           playerName,
           points,
           trick: trickObj,
+          winningCard,
         },
       });
 
+      // Phase 2: Flying animation towards the winner's pod (1.5s to 2.5s)
+      setTimeout(() => {
+        set((state) => {
+          if (!state.trickCelebration) return state;
+          return {
+            trickCelebration: {
+              ...state.trickCelebration,
+              phase: 'flying',
+            },
+          };
+        });
+      }, 1500);
+
+      // Phase 3: Complete & cleanup (2.6s)
       setTimeout(() => {
         set({ trickCelebration: null });
-      }, 1800);
+      }, 2600);
 
       syncState(data.gameState);
     });

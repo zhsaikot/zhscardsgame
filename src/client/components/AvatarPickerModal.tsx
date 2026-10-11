@@ -136,3 +136,4 @@ export const AvatarPickerModal: React.FC<AvatarPickerModalProps> = ({
 };
 
 export default AvatarPickerModal;
+

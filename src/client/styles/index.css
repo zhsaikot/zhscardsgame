@@ -3490,3 +3490,260 @@ body {
     border-radius: 72px;
   }
 }
+
+
+/* ==========================================================================
+   TRICK WINNER & CARD FLIGHT ANIMATIONS
+   - Spotlight Winner Modal & Announcement
+   - Winning Card Glow & Crown Halo
+   - 4-Direction Card Flight to Winner (North, South, East, West)
+   - Winner Pod Ring Burst Animation
+   - Won Tricks Pile Counters
+   ========================================================================== */
+
+/* Winner Spotlight Overlay */
+.trick-winner-spotlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(5, 22, 17, 0.95);
+  backdrop-filter: blur(14px);
+  border: 2px solid #ffd700;
+  border-radius: 16px;
+  padding: 0.65rem 1.4rem;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.85), 0 0 30px rgba(255, 215, 0, 0.5);
+  position: relative;
+  z-index: 40;
+  text-align: center;
+  max-width: 320px;
+}
+
+.spotlight-crown {
+  font-size: 1.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+  animation: crownBob 1.2s infinite ease-in-out;
+}
+
+@keyframes crownBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px) scale(1.1); }
+}
+
+.spotlight-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.spotlight-title strong {
+  color: #ffd700;
+}
+
+.spotlight-pts-banner {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #041c13;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 2px 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.6);
+}
+
+.spotlight-sub-direction {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.spotlight-sub-direction strong {
+  color: #fef08a;
+}
+
+/* Winner Card Halo & Glow */
+.winner-card-halo {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(135deg, #ffd700 0%, #b45309 100%);
+  color: #041c13;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 1px 7px;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+  margin-bottom: 2px;
+}
+
+.halo-crown { font-size: 0.75rem; }
+.halo-text { letter-spacing: 0.05em; }
+
+.standing-trick-card.is-winner-card {
+  transform: translateY(-12px) scale(1.08);
+  z-index: 35;
+}
+
+.card-face.mini-upright.card-glow-gold {
+  border: 2.5px solid #ffd700 !important;
+  box-shadow: 0 0 24px rgba(255, 215, 0, 0.75), 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+}
+
+.tag-winner-player {
+  background: rgba(212, 175, 55, 0.25) !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  font-weight: 800 !important;
+}
+
+.card-trump-cut-tag {
+  font-size: 0.55rem;
+  font-weight: 900;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   4-Direction Card Flight to Winner (South, North, West, East)
+   -------------------------------------------------------------------------- */
+.cards-flight-group {
+  transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.cards-flight-group.fly-to-south {
+  animation: flyToSouth 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.cards-flight-group.fly-to-north {
+  animation: flyToNorth 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.cards-flight-group.fly-to-west {
+  animation: flyToWest 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.cards-flight-group.fly-to-east {
+  animation: flyToEast 0.95s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes flyToSouth {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(0, 80px) scale(0.7) rotate(6deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0, 200px) scale(0.15) rotate(18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flyToNorth {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(0, -80px) scale(0.7) rotate(-6deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0, -200px) scale(0.15) rotate(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flyToWest {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(-130px, 0) scale(0.7) rotate(-12deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-290px, 0) scale(0.15) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flyToEast {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(130px, 0) scale(0.7) rotate(12deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(290px, 0) scale(0.15) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Winner Avatar Pod Burst & Won Tricks Pile Badge
+   -------------------------------------------------------------------------- */
+.stadium-avatar-ring.is-winner-ring {
+  border-color: #ffd700 !important;
+  animation: winnerRingBurst 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes winnerRingBurst {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.3);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.95), 0 0 55px rgba(255, 215, 0, 0.55);
+    transform: scale(1.1);
+  }
+}
+
+.player-won-tricks-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, rgba(6, 32, 23, 0.92), rgba(3, 18, 13, 0.92));
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  color: #ffd700;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+.player-won-tricks-pill.highlight-won {
+  animation: wonPillBounce 0.6s ease;
+  border-color: #ffd700;
+  background: linear-gradient(135deg, #1e3a8a, #047857);
+}
+
+@keyframes wonPillBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.trophy-mini {
+  font-size: 0.72rem;
+}
+
+.team-tricks-count {
+  font-size: 0.62rem;
+  color: #6ee7b7;
+  font-weight: 700;
+  display: block;
+}

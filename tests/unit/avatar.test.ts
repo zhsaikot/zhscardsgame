@@ -51,3 +51,4 @@ describe('Avatar Utilities & Integration', () => {
     expect(bot4?.avatar).toBe(getBotAvatar(4));
   });
 });
+

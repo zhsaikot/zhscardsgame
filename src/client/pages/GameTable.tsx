@@ -68,7 +68,16 @@ const GameTable: React.FC = () => {
         return [...prev, { id: String(Date.now()), sender: 'Table', text: log, isSystem: true }];
       });
     }
-  }, [gameState?.phase, gameState?.highestBid, gameState?.trumpRevealed, gameState?.trumpSuit]);
+
+    if (gameState.lastCompletedTrick && gameState.lastCompletedTrick.winner) {
+      const winner = gameState.players.find((p) => p.seat === gameState.lastCompletedTrick?.winner);
+      const log = `🏆 ${winner?.username || 'Player'} won Trick #${gameState.completedTricks.length} (+${gameState.lastCompletedTrick.points} pts)`;
+      setMessages((prev) => {
+        if (prev[prev.length - 1]?.text === log) return prev;
+        return [...prev, { id: String(Date.now()), sender: 'Table', text: log, isSystem: true }];
+      });
+    }
+  }, [gameState?.phase, gameState?.highestBid, gameState?.trumpRevealed, gameState?.trumpSuit, gameState?.completedTricks?.length]);
 
   if (!gameState) {
     return (
@@ -135,6 +144,9 @@ const GameTable: React.FC = () => {
       ? avatar || player?.avatar || getSavedAvatar()
       : player?.avatar || (isBot ? getBotAvatar(seat) : getBotAvatar(seat));
 
+    const wonTricks = (gameState.completedTricks || []).filter((t) => t.winner === seat);
+    const wonPoints = wonTricks.reduce((acc, t) => acc + (t.points || 0), 0);
+
     return (
       <div
         className={`stadium-player-pod ${directionClass} ${
@@ -152,7 +164,9 @@ const GameTable: React.FC = () => {
 
         {/* Circular Avatar Ring with Gold Rim */}
         <div
-          className={`stadium-avatar-ring ${isMe ? 'is-me-clickable' : ''}`}
+          className={`stadium-avatar-ring ${isMe ? 'is-me-clickable' : ''} ${
+            isTrickWinner ? 'is-winner-ring' : ''
+          }`}
           onClick={() => isMe && setShowAvatarModal(true)}
           title={isMe ? 'Click to change avatar / ছবি পরিবর্তন করুন' : player?.username}
         >
@@ -187,6 +201,17 @@ const GameTable: React.FC = () => {
             </span>
           </div>
 
+          {/* Won Tricks Indicator Badge */}
+          {wonTricks.length > 0 && (
+            <div
+              className={`player-won-tricks-pill ${isTrickWinner ? 'highlight-won' : ''}`}
+              title={`${wonTricks.length} tricks won this round (${wonPoints} points)`}
+            >
+              <span className="trophy-mini">🏆</span>
+              <span>{wonTricks.length} চাল ({wonPoints} pts)</span>
+            </div>
+          )}
+
           {!isMe && (
             <div className="player-hand-backs" title={`${cardCount} cards remaining`}>
               {Array.from({ length: Math.min(cardCount, 8) }).map((_, i) => (
@@ -198,6 +223,9 @@ const GameTable: React.FC = () => {
       </div>
     );
   };
+
+  const teamATricks = (gameState.completedTricks || []).filter((t) => [1, 3].includes(t.winner!)).length;
+  const teamBTricks = (gameState.completedTricks || []).filter((t) => [2, 4].includes(t.winner!)).length;
 
   return (
     <div className="stadium-viewport">
@@ -221,7 +249,10 @@ const GameTable: React.FC = () => {
             <div className="score-row team-a-row">
               <div className="team-meta">
                 <LionMiniCrest />
-                <span className="team-name">Team A (1 &amp; 3)</span>
+                <div>
+                  <span className="team-name">Team A (1 &amp; 3)</span>
+                  <span className="team-tricks-count">{teamATricks} চাল জিতেছেন</span>
+                </div>
               </div>
               <div className="team-scores">
                 <span className="current-pts">{gameState.teamPoints?.A ?? 0} pts</span>
@@ -232,7 +263,10 @@ const GameTable: React.FC = () => {
             <div className="score-row team-b-row">
               <div className="team-meta">
                 <GriffinMiniCrest />
-                <span className="team-name">Team B (2 &amp; 4)</span>
+                <div>
+                  <span className="team-name">Team B (2 &amp; 4)</span>
+                  <span className="team-tricks-count">{teamBTricks} চাল জিতেছেন</span>
+                </div>
               </div>
               <div className="team-scores">
                 <span className="current-pts">{gameState.teamPoints?.B ?? 0} pts</span>

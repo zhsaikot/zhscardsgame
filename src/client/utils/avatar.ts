@@ -84,3 +84,4 @@ export async function compressAndSaveAvatar(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
