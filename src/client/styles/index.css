@@ -6710,3 +6710,460 @@ body {
     margin: 0 -8px;
   }
 }
+
+
+/* ==========================================================================
+   INLINE TRUMP SELECTION CONSOLE (DIRECTLY ABOVE 4 HAND CARDS)
+   No screen-blocking popups - Player always sees their 4 cards!
+   ========================================================================== */
+.classic-trump-selection-console {
+  width: 100%;
+  max-width: 680px;
+  background: linear-gradient(180deg, rgba(43, 17, 10, 0.96) 0%, rgba(23, 9, 5, 0.96) 100%);
+  border: 2px solid #854d0e;
+  border-radius: 12px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+  margin-bottom: 2px;
+}
+
+.trump-header-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.trump-header-banner.my-turn {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.trump-header-banner.waiting {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.trump-header-banner .banner-title {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #fbbf24;
+  letter-spacing: 0.04em;
+}
+
+.trump-header-banner .banner-hint {
+  font-size: 0.68rem;
+  color: #fef08a;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.trump-suits-deck-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.trump-suit-card-btn {
+  background: linear-gradient(180deg, #3d1b11 0%, #220e08 100%);
+  border: 1.5px solid #92400e;
+  border-radius: 8px;
+  padding: 8px 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.trump-suit-card-btn:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(180deg, #5a2618 0%, #36140b 100%);
+  border-color: #fbbf24;
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+}
+
+.trump-suit-card-btn.red-suit .suit-symbol-large {
+  color: #ef4444;
+}
+
+.trump-suit-card-btn.black-suit .suit-symbol-large {
+  color: #f8fafc;
+}
+
+.suit-symbol-large {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.suit-name-text {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.suit-hand-count {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.trump-suit-card-btn.has-cards {
+  border-color: #d97706;
+}
+
+.trump-suit-card-btn.no-cards {
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   LOBBY / HOME PAGE - CASINO RUBY RED VELVET & MAHOGANY THEME
+   Matches the inside table perfectly with rich crimson, wood, and gold
+   ========================================================================== */
+.ruby-lobby-viewport {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0404 radial-gradient(circle at 50% 25%, #2a080d 0%, #080203 100%);
+  color: #fdfbf7;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px 16px;
+}
+
+.ruby-lobby-container {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+  animation: fadeInLobby 0.5s ease;
+}
+
+@keyframes fadeInLobby {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Lobby Header */
+.ruby-lobby-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+}
+
+.eyebrow-suit.red { color: #ef4444; }
+.eyebrow-suit.black { color: #cbd5e1; }
+
+.emblem-29-wrap {
+  margin: 2px 0;
+}
+
+.emblem-29-gold {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #fef08a 0%, #d97706 70%, #92400e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 12px rgba(217, 119, 6, 0.5));
+  letter-spacing: -0.05em;
+}
+
+.ruby-lobby-subtitle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #d6d3d1;
+}
+
+/* Main Card */
+.ruby-lobby-card {
+  width: 100%;
+  background: linear-gradient(135deg, #2b110a 0%, #170803 100%);
+  border: 2px solid #854d0e;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Avatar Picker Row */
+.lobby-avatar-picker-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lobby-avatar-picker-bar:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: #fbbf24;
+  transform: translateY(-1px);
+}
+
+.avatar-gold-ring {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #d97706;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.avatar-img-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  background: #d97706;
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 1px 3px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.avatar-text-block {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.avatar-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.avatar-subtitle {
+  font-size: 0.68rem;
+  color: #fbbf24;
+}
+
+/* Alias Input Group */
+.ruby-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ruby-input-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.05em;
+}
+
+.ruby-input-field {
+  background: rgba(10, 4, 4, 0.85);
+  border: 1.5px solid #854d0e;
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.ruby-input-field:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+}
+
+.ruby-error-banner {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* Actions Stack */
+.ruby-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-ruby-gold {
+  background: linear-gradient(180deg, #d97706 0%, #b45309 100%);
+  border: 1.5px solid #fef08a;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btn-ruby-gold:hover:not(:disabled) {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.7);
+}
+
+.btn-ruby-gold:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-ruby-mahogany {
+  background: linear-gradient(180deg, #3d1b11 0%, #240e08 100%);
+  border: 1.5px solid #854d0e;
+  color: #fde68a;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btn-ruby-mahogany:hover:not(:disabled) {
+  background: linear-gradient(180deg, #4f2317 0%, #2e140c 100%);
+  border-color: #d97706;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.ruby-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #a8a29e;
+  letter-spacing: 0.08em;
+  margin: 4px 0;
+}
+
+.ruby-join-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ruby-join-row .join-input {
+  flex: 1;
+}
+
+.btn-ruby-gold.btn-join {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+}
+
+/* Seating Preview */
+.ruby-seating-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.seating-preview-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.seating-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.seat-pod-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.seat-pod-pill.team-a {
+  border-left: 3px solid #3b82f6;
+}
+
+.seat-pod-pill.team-b {
+  border-left: 3px solid #ef4444;
+}
+
+.seat-shield {
+  font-size: 1.1rem;
+}
+
+.seat-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.seat-meta strong {
+  font-size: 0.72rem;
+  color: #ffffff;
+}
+
+.seat-meta span {
+  font-size: 0.62rem;
+  color: #a8a29e;
+}

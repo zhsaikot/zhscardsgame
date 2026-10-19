@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useGameStore } from '../game/useGameStore';
 import type { Suit } from '@shared/types';
 import { SUIT_SYMBOLS } from './PlayerHand';
+import { playTrumpRevealSound } from '../utils/audio';
 
 const TrumpSelection: React.FC = () => {
-  const { selectTrump } = useGameStore();
-  const [selectedSuit, setSelectedSuit] = useState<Suit | null>(null);
+  const { gameState, playerId, selectTrump } = useGameStore();
+
+  if (!gameState || gameState.phase !== 'TRUMP_SELECTION') return null;
+
+  const currentPlayer =
+    gameState.players.find((p) => p.id === playerId) ||
+    gameState.players.find((p) => !p.isBot) ||
+    gameState.players[0];
+
+  const mySeat = currentPlayer?.seat || 1;
+  const isWinningBidder = gameState.winningBidder === mySeat;
+  const winningPlayer = gameState.players.find((p) => p.seat === gameState.winningBidder);
 
   const suits: Array<{ suit: Suit; name: string }> = [
     { suit: 'spades', name: 'Spades' },
@@ -14,58 +25,65 @@ const TrumpSelection: React.FC = () => {
     { suit: 'clubs', name: 'Clubs' },
   ];
 
-  const handleConfirm = () => {
-    if (selectedSuit) {
-      selectTrump(selectedSuit);
-    }
+  // Count cards per suit in player's hand
+  const hand = currentPlayer?.hand || [];
+  const getSuitCount = (suit: Suit) => {
+    return hand.filter((c) => c.suit === suit).length;
+  };
+
+  const handleSelect = (suit: Suit) => {
+    if (!isWinningBidder) return;
+    playTrumpRevealSound();
+    selectTrump(suit);
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal" style={{ maxWidth: '460px' }}>
-        <h2 className="modal-title gold-text">Select Trump Suit</h2>
-        <p className="modal-subtitle">
-          You won the contract! Select the trump suit for this round:
-        </p>
+    <div className="classic-trump-selection-console animate-fade-in">
+      {/* Status Header */}
+      <div className={`trump-header-banner ${isWinningBidder ? 'my-turn' : 'waiting'}`}>
+        {isWinningBidder ? (
+          <span className="banner-title active-glow">
+            👑 YOU WON BID ({gameState.highestBid} PTS) • SELECT TRUMP SUIT
+          </span>
+        ) : (
+          <span className="banner-title">
+            ⏳ {winningPlayer?.username || `Seat ${gameState.winningBidder}`} is choosing Trump suit...
+          </span>
+        )}
+        <span className="banner-hint">
+          {isWinningBidder
+            ? 'Review your 4 cards below and click a suit to set as Trump:'
+            : 'Waiting for trump selection to begin round'}
+        </span>
+      </div>
 
-        <div className="trump-selector-grid">
+      {/* 4 Interactive Suit Option Cards */}
+      {isWinningBidder && (
+        <div className="trump-suits-deck-row">
           {suits.map(({ suit, name }) => {
-            const isSelected = selectedSuit === suit;
+            const count = getSuitCount(suit);
+            const isRed = suit === 'hearts' || suit === 'diamonds';
+
             return (
-              <div
+              <button
                 key={suit}
-                className={`trump-card-option ${isSelected ? 'selected' : ''}`}
-                onClick={() => setSelectedSuit(suit)}
-                data-suit={suit}
+                type="button"
+                className={`trump-suit-card-btn ${isRed ? 'red-suit' : 'black-suit'} ${
+                  count > 0 ? 'has-cards' : 'no-cards'
+                }`}
+                onClick={() => handleSelect(suit)}
+                title={`Set ${name} as Trump (${count} card${count === 1 ? '' : 's'} in hand)`}
               >
-                <div
-                  className="trump-option-symbol"
-                  style={{
-                    color:
-                      suit === 'hearts' || suit === 'diamonds'
-                        ? 'var(--ruby-red)'
-                        : suit === 'clubs'
-                        ? '#34d399'
-                        : '#f8fafc',
-                  }}
-                >
-                  {SUIT_SYMBOLS[suit]}
+                <div className="suit-symbol-large">{SUIT_SYMBOLS[suit]}</div>
+                <div className="suit-name-text">{name}</div>
+                <div className="suit-hand-count">
+                  {count > 0 ? `${count} in hand` : 'None in hand'}
                 </div>
-                <div className="trump-option-name">{name}</div>
-              </div>
+              </button>
             );
           })}
         </div>
-
-        <button
-          className="btn-emerald-sleek"
-          onClick={handleConfirm}
-          disabled={!selectedSuit}
-          style={{ width: '100%', marginTop: '1.2rem', padding: '0.9rem' }}
-        >
-          {selectedSuit ? `Set ${selectedSuit.toUpperCase()} as Trump` : 'Choose a Suit'}
-        </button>
-      </div>
+      )}
     </div>
   );
 };

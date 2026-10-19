@@ -3,42 +3,6 @@ import { useGameStore } from '../game/useGameStore';
 import AvatarPickerModal from '../components/AvatarPickerModal';
 import { getSavedAvatar } from '../utils/avatar';
 
-// SVG Shield with Lion Crest (Team A)
-const LionShieldIcon = () => (
-  <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z"
-      fill="#0c2e24"
-      stroke="#34d399"
-      strokeWidth="1.5"
-    />
-    {/* Lion silhouette / crown emblem */}
-    <path
-      d="M12 7L13.5 10H16L14 12L15 15L12 13.5L9 15L10 12L8 10H10.5L12 7Z"
-      fill="#6ee7b7"
-    />
-    <circle cx="12" cy="18" r="1.5" fill="#34d399" />
-  </svg>
-);
-
-// SVG Shield with Griffin / Eagle Crest (Team B)
-const GriffinShieldIcon = () => (
-  <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z"
-      fill="#29121a"
-      stroke="#f87171"
-      strokeWidth="1.5"
-    />
-    {/* Eagle / Griffin wings emblem */}
-    <path
-      d="M12 8L15 11L13 13L16 16L12 14L8 16L11 13L9 11L12 8Z"
-      fill="#fca5a5"
-    />
-    <circle cx="12" cy="18" r="1.5" fill="#f87171" />
-  </svg>
-);
-
 const Lobby: React.FC = () => {
   const { createGame, joinGame, startSoloGame } = useGameStore();
   const [username, setUsername] = useState('');
@@ -104,61 +68,58 @@ const Lobby: React.FC = () => {
   };
 
   return (
-    <div className="lobby-wrapper">
-      {/* Background Sacred Geometry & Floating Suits */}
-      <div className="bg-geometry-mandala" />
+    <div className="ruby-lobby-viewport">
+      {/* Background Floating Card Suit Emblems */}
       <div className="bg-floating-suits">
         <span className="suit-float float-1">♠</span>
-        <span className="suit-float float-2">♣</span>
+        <span className="suit-float float-2">♥</span>
         <span className="suit-float float-3">♦</span>
-        <span className="suit-float float-4">♥</span>
+        <span className="suit-float float-4">♣</span>
       </div>
 
-      <div className="lobby-container-modern">
-        {/* Header exact match to user reference */}
-        <header className="lobby-header-sleek">
-          <div className="room-nav-title">&lt; ROYAL EMERALD CARD ROOM &gt;</div>
-          <div className="emblem-29-container">
-            <span className="emblem-diamond top">✦</span>
-            <span className="emblem-diamond left">✦</span>
-            <h1 className="emblem-29-numeral">29</h1>
-            <span className="emblem-diamond right">✦</span>
-            <span className="emblem-diamond bottom">✦</span>
+      <div className="ruby-lobby-container">
+        {/* Header matching Casino Ruby Red & Mahogany theme */}
+        <header className="ruby-lobby-header">
+          <div className="header-eyebrow">
+            <span className="eyebrow-suit red">♥</span>
+            <span className="eyebrow-text">ROYAL 29 CARD ARENA</span>
+            <span className="eyebrow-suit black">♠</span>
           </div>
-          <p className="room-subtitle-sleek">HIGH-STAKES MULTIPLAYER CARD GAME</p>
+
+          <div className="emblem-29-wrap">
+            <h1 className="emblem-29-gold">29</h1>
+          </div>
+
+          <p className="ruby-lobby-subtitle">CLASSIC TRICK-TAKING PARTNERSHIP GAME</p>
         </header>
 
-        {/* Main Card with sharp rectangular styling & subtle glowing border */}
-        <div className="card-box-sleek">
-          <div className="card-corner-badge">✦</div>
-
+        {/* Main Mahogany & Ruby Velvet Plaque Card */}
+        <div className="ruby-lobby-card">
           {/* Profile Avatar Selection Row */}
           <div
-            className="lobby-avatar-banner"
+            className="lobby-avatar-picker-bar"
             onClick={() => setShowAvatarModal(true)}
             title="Click to customize or upload your avatar"
           >
-            <div className="lobby-avatar-pod">
-              <img src={avatar} alt="Profile Avatar" className="lobby-avatar-circle" />
-              <span className="lobby-avatar-edit-icon">📷</span>
+            <div className="avatar-gold-ring">
+              <img src={avatar} alt="Profile Avatar" className="avatar-img-circle" />
+              <span className="avatar-edit-badge">📷</span>
             </div>
-            <div className="lobby-avatar-meta">
-              <span className="lobby-avatar-title">YOUR PROFILE AVATAR / অ্যাভাটার</span>
-              <span className="lobby-avatar-sub">
-                Click to change or upload photo ✦
-              </span>
+            <div className="avatar-text-block">
+              <span className="avatar-title">PLAYER PROFILE AVATAR</span>
+              <span className="avatar-subtitle">Click to choose or upload photo</span>
             </div>
           </div>
 
-          {/* Alias Input */}
-          <div className="input-group-sleek">
-            <label className="input-label-sleek" htmlFor="player-alias">
-              YOUR PLAYER ALIAS
+          {/* Alias Input Field */}
+          <div className="ruby-input-group">
+            <label className="ruby-input-label" htmlFor="player-alias">
+              YOUR PLAYER NAME / ALIAS
             </label>
             <input
               id="player-alias"
               type="text"
-              className="input-field-glowing"
+              className="ruby-input-field"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="e.g. Maverick, Royale, Ace"
@@ -168,103 +129,97 @@ const Lobby: React.FC = () => {
             />
           </div>
 
-          {/* Action Buttons */}
-          <div className="actions-stack">
-            {/* Solo Mode Button (Player requested single-player vs bots) */}
+          {/* Error Message */}
+          {error && <div className="ruby-error-banner">{error}</div>}
+
+          {/* Game Action Buttons */}
+          <div className="ruby-actions-stack">
+            {/* Solo Mode: Play vs Bots */}
             <button
-              className="btn-emerald-sleek"
+              type="button"
+              className="btn-ruby-gold"
               onClick={handleStartSolo}
               disabled={loading}
-              title="Play immediately against 3 smart AI bots"
+              title="Play immediately against 3 AI bots"
             >
-              <span>♦</span>
-              <span>{loading ? 'Launching Match...' : 'Play Solo vs AI Bots'}</span>
+              <span className="btn-icon">♦</span>
+              <span className="btn-text">
+                {loading ? 'Launching Match...' : 'Play Solo vs AI Bots'}
+              </span>
+              <span className="btn-icon">♦</span>
             </button>
 
-            {/* Multiplayer Create Table */}
+            {/* Multiplayer: Create New Table */}
             <button
-              className="btn-emerald-sleek secondary-emerald"
+              type="button"
+              className="btn-ruby-mahogany"
               onClick={handleCreateMultiplayer}
               disabled={loading}
-              title="Create a table for you and friends"
+              title="Create a private room for friends"
             >
-              <span>♦</span>
               <span>Create New Table</span>
             </button>
 
             {/* Divider */}
-            <div className="divider-sleek">
-              <span>— OR JOIN AN EXISTING TABLE —</span>
+            <div className="ruby-divider">
+              <span>OR JOIN TABLE</span>
             </div>
 
-            {/* Join Table Section */}
-            <div className="join-row-sleek">
+            {/* Join Table Input & Button */}
+            <div className="ruby-join-row">
               <input
                 type="text"
-                className="input-field-subtle"
+                className="ruby-input-field join-input"
                 value={gameIdInput}
                 onChange={(e) => setGameIdInput(e.target.value)}
-                placeholder="Enter Room / Table ID"
+                placeholder="Enter Table / Room ID"
                 disabled={loading}
                 onKeyDown={(e) => e.key === 'Enter' && handleJoinGame()}
               />
               <button
-                className="btn-join-gold"
+                type="button"
+                className="btn-ruby-gold btn-join"
                 onClick={handleJoinGame}
                 disabled={loading}
               >
-                Join Table
+                Join
               </button>
             </div>
           </div>
 
-          {error && <div className="error-toast-sleek">{error}</div>}
-
-          {/* Table Seating Arrangement (Hexagon Pattern Container) */}
-          <div className="seating-section-sleek">
-            <div className="seating-title-sleek">TABLE SEATING ARRANGEMENT</div>
-            <div className="seating-grid-sleek">
-              {/* Seat 1 (South) */}
-              <div className="seat-pod-sleek team-a-glow">
-                <div className="shield-box team-a">
-                  <LionShieldIcon />
-                </div>
-                <div className="seat-info-texts">
-                  <div className="seat-main-text">Seat 1 (South)</div>
-                  <div className="seat-sub-text">Team A (Partner: Seat 3)</div>
+          {/* Table Seating Arrangement Card */}
+          <div className="ruby-seating-preview">
+            <div className="seating-preview-title">TABLE PARTNERSHIP ARRANGEMENT</div>
+            <div className="seating-preview-grid">
+              <div className="seat-pod-pill team-a">
+                <span className="seat-shield">🦁</span>
+                <div className="seat-meta">
+                  <strong>Seat 1 (South) • You</strong>
+                  <span>Team A (Partner: Seat 3)</span>
                 </div>
               </div>
 
-              {/* Seat 2 (West) */}
-              <div className="seat-pod-sleek team-b-glow">
-                <div className="shield-box team-b">
-                  <GriffinShieldIcon />
-                </div>
-                <div className="seat-info-texts">
-                  <div className="seat-main-text">Seat 2 (West)</div>
-                  <div className="seat-sub-text">Team B (Partner: Seat 4)</div>
+              <div className="seat-pod-pill team-b">
+                <span className="seat-shield">🦅</span>
+                <div className="seat-meta">
+                  <strong>Seat 2 (West)</strong>
+                  <span>Team B (Partner: Seat 4)</span>
                 </div>
               </div>
 
-              {/* Seat 3 (North) */}
-              <div className="seat-pod-sleek team-a-glow">
-                <div className="shield-box team-a">
-                  <LionShieldIcon />
-                </div>
-                <div className="seat-info-texts">
-                  <div className="seat-main-text">Seat 3 (North)</div>
-                  <div className="seat-sub-text">Team A (Partner: Seat 1)</div>
+              <div className="seat-pod-pill team-a">
+                <span className="seat-shield">🦁</span>
+                <div className="seat-meta">
+                  <strong>Seat 3 (North)</strong>
+                  <span>Team A (Partner: Seat 1)</span>
                 </div>
               </div>
 
-              {/* Seat 4 (East) */}
-              <div className="seat-pod-sleek team-b-glow">
-                <div className="shield-box team-b">
-                  <GriffinShieldIcon />
-                </div>
-                <div className="seat-info-texts">
-                  <div className="seat-main-text">Seat 4 (East)</div>
-                  <div className="seat-sub-text">Team B (Partner: Seat 2)</div>
+              <div className="seat-pod-pill team-b">
+                <span className="seat-shield">🦅</span>
+                <div className="seat-meta">
+                  <strong>Seat 4 (East)</strong>
+                  <span>Team B (Partner: Seat 2)</span>
                 </div>
               </div>
             </div>
@@ -279,6 +234,7 @@ const Lobby: React.FC = () => {
           onSelect={(newAv) => {
             setAvatar(newAv);
             useGameStore.getState().setAvatar(newAv);
+            setShowAvatarModal(false);
           }}
           onClose={() => setShowAvatarModal(false)}
         />

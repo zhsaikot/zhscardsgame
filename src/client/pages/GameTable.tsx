@@ -243,9 +243,10 @@ const GameTable: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Console: Bidding Bar (during bidding) + Hand Cards */}
+        {/* Bottom Console: Bidding Bar (during bidding) + Trump Selection (during trump selection) + Hand Cards */}
         <section className="classic-bottom-console">
           {isBiddingPhase && <BiddingPanel />}
+          {isTrumpSelectionPhase && <TrumpSelection />}
 
           {currentPlayer && (
             <PlayerHand
@@ -256,9 +257,6 @@ const GameTable: React.FC = () => {
           )}
         </section>
       </main>
-
-      {/* Trump Selection Modal for Winning Bidder */}
-      {isMyTrumpSelection && <TrumpSelection />}
 
       {/* Avatar Picker Modal */}
       {showAvatarModal && (
