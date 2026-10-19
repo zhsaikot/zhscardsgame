@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../game/useGameStore';
 import { SUIT_SYMBOLS } from './PlayerHand';
+import { getSavedAvatar } from '../utils/avatar';
 
 interface GameInfoProps {
   onToggleRules?: () => void;
@@ -13,14 +14,18 @@ const GameInfo: React.FC<GameInfoProps> = ({
   onToggleChat,
   onToggleSettings,
 }) => {
-  const { gameState, leaveGame } = useGameStore();
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const { gameState, playerId, leaveGame } = useGameStore();
+  const [showMobileDrawer, setShowMobileDrawer] = useState(false);
 
   if (!gameState) return null;
 
+  const currentPlayer =
+    gameState.players.find((p) => p.id === playerId) ||
+    gameState.players.find((p) => !p.isBot) ||
+    gameState.players[0];
+
+  const userAvatar = currentPlayer?.avatar || getSavedAvatar();
   const isHidden = !gameState.trumpRevealed && gameState.settings?.hiddenTrump;
-  const isTeamABidder = gameState.winningBidder && [1, 3].includes(gameState.winningBidder);
-  const isTeamBBidder = gameState.winningBidder && [2, 4].includes(gameState.winningBidder);
 
   const handleExitConfirm = () => {
     if (window.confirm('Are you sure you want to leave the table? / আপনি কি খেলা ছেড়ে যেতে চান?')) {
@@ -30,182 +35,105 @@ const GameInfo: React.FC<GameInfoProps> = ({
 
   return (
     <>
-      {/* Desktop / Tablet Header */}
-      <header className="stadium-notch-header">
-        {/* Left Branding & Target Column */}
-        <div className="notch-left-branding">
-          <div className="brand-logo-row">
-            <span className="brand-bengali-numeral">২৯</span>
-            <span className="brand-dash">-</span>
-            <span className="brand-english-numeral">29</span>
+      <header className="esports-top-nav">
+        {/* Left: Brand Name & Round Tag */}
+        <div className="esports-nav-brand">
+          <div className="brand-title-wrap">
+            <span className="brand-logo-text">29 ARENA</span>
+            <span className="brand-badge-tag">CHAMPIONSHIP</span>
           </div>
-          <div className="brand-subtitle">29 Card Game</div>
-          <div className="brand-target-pill">
-            <span className="target-lbl">TARGET:</span>
-            <span className="target-val">29</span>
-          </div>
+          <span className="round-pill-badge">Round {gameState.roundNumber || 1}</span>
         </div>
 
-        {/* Center Stadium Hanging Curved Notch with Scores & Trump Card */}
-        <div className="curved-center-notch">
-          {/* Left Team A Score Inside Notch */}
-          <div className={`notch-team-box team-a ${isTeamABidder ? 'bidding-team' : ''}`}>
-            <div className="notch-team-label">
-              <span className="team-dot team-a-dot">●</span> TEAM A
-            </div>
-            <div className="notch-team-points">
-              {gameState.teamPoints?.A ?? 0}
-              <span className="notch-team-match-score">
-                ({gameState.gameScore?.teamA ?? 0})
-              </span>
-            </div>
-            {isTeamABidder && gameState.highestBid && (
-              <div className="notch-team-bid-tag">Target: {gameState.highestBid}</div>
-            )}
+        {/* Center: Match Status & Trump Pill */}
+        <div className="esports-nav-center">
+          {/* Team A Score Pill */}
+          <div className="nav-score-pill team-a">
+            <span className="team-indicator-dot a">●</span>
+            <span className="score-lbl">TEAM A:</span>
+            <strong className="score-num">{gameState.teamPoints?.A ?? 0}</strong>
+            <span className="score-won">({gameState.gameScore?.teamA ?? 0})</span>
           </div>
 
-          {/* Center Golden Trump Card Showcase Badge */}
+          {/* Trump Card Pill */}
           <div
-            className={`notch-trump-badge ${gameState.trumpSuit || 'no-trump'} ${
-              isHidden ? 'is-hidden' : 'is-revealed'
-            }`}
-            title={
-              gameState.trumpSuit
-                ? isHidden
-                  ? 'Trump Card is hidden (secret)'
-                  : `Trump Suit: ${gameState.trumpSuit}`
-                : 'Trump suit not chosen yet'
-            }
+            className={`nav-trump-pill ${gameState.trumpSuit || 'no-trump'}`}
+            title="Trump Card (ট্রাম্প)"
           >
-            <div className="notch-trump-banner">
-              <span className="trump-bilingual-title">TRUMP ট্রাম্প</span>
-            </div>
-
-            <div className="notch-trump-card-slot">
-              {gameState.trumpSuit ? (
-                isHidden ? (
-                  <div className="notch-trump-card-back">
-                    <span className="notch-trump-question">?</span>
-                  </div>
-                ) : (
-                  <div className={`notch-trump-card-face suit-${gameState.trumpSuit}`}>
-                    <span className="notch-trump-suit-icon">
-                      {SUIT_SYMBOLS[gameState.trumpSuit]}
-                    </span>
-                    <span className="notch-trump-suit-name">
-                      {gameState.trumpSuit.slice(0, 3).toUpperCase()}
-                    </span>
-                  </div>
-                )
-              ) : (
-                <div className="notch-trump-card-empty">
-                  <span className="notch-trump-empty-icon">♠</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Right Team B Score Inside Notch */}
-          <div className={`notch-team-box team-b ${isTeamBBidder ? 'bidding-team' : ''}`}>
-            <div className="notch-team-label">
-              <span className="team-dot team-b-dot">●</span> TEAM B
-            </div>
-            <div className="notch-team-points">
-              {gameState.teamPoints?.B ?? 0}
-              <span className="notch-team-match-score">
-                ({gameState.gameScore?.teamB ?? 0})
-              </span>
-            </div>
-            {isTeamBBidder && gameState.highestBid && (
-              <div className="notch-team-bid-tag">Target: {gameState.highestBid}</div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Column: 4 Circular Gold Buttons */}
-        <div className="notch-right-controls">
-          <button
-            className="circle-gold-btn"
-            onClick={onToggleSettings}
-            title="Settings / সেটিংস"
-          >
-            <span className="btn-icon">⚙️</span>
-          </button>
-
-          <button
-            className="circle-gold-btn"
-            onClick={onToggleChat}
-            title="Game Chat & Log / চ্যাট"
-          >
-            <span className="btn-icon">💬</span>
-          </button>
-
-          <button
-            className="circle-gold-btn"
-            onClick={onToggleRules}
-            title="Game Rules & Points / নিয়মাবলী"
-          >
-            <span className="btn-icon">ℹ️</span>
-          </button>
-
-          <button
-            className="circle-gold-btn exit-btn"
-            onClick={handleExitConfirm}
-            title="Leave Table / খেলা ত্যাগ করুন"
-          >
-            <span className="btn-icon">🚪</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Streamlined Top HUD Bar */}
-      <header className="mobile-hud-bar">
-        {/* Left: Brand logo & Round */}
-        <div className="mobile-hud-left">
-          <span className="mobile-brand-numeral">২৯</span>
-          <span className="mobile-round-tag">R{gameState.roundNumber || 1}</span>
-        </div>
-
-        {/* Center: Team Scores + Trump Pill */}
-        <div className="mobile-hud-center">
-          <div className="mobile-score-box team-a">
-            <span className="mobile-score-lbl">A:</span>
-            <span className="mobile-score-val">{gameState.teamPoints?.A ?? 0}</span>
-          </div>
-
-          {/* Compact Trump Card Slot */}
-          <div className="mobile-trump-pill" title="Trump status">
+            <span className="trump-pill-label">TRUMP:</span>
             {gameState.trumpSuit ? (
               isHidden ? (
-                <span className="mobile-trump-secret">🔒 ?</span>
+                <span className="trump-secret-text">🔒 ?</span>
               ) : (
-                <span className={`mobile-trump-revealed suit-${gameState.trumpSuit}`}>
-                  {SUIT_SYMBOLS[gameState.trumpSuit]}
+                <span className={`trump-revealed-suit suit-${gameState.trumpSuit}`}>
+                  {SUIT_SYMBOLS[gameState.trumpSuit]} {gameState.trumpSuit.toUpperCase()}
                 </span>
               )
             ) : (
-              <span className="mobile-trump-empty">♠</span>
+              <span className="trump-unrevealed-text">Pending</span>
             )}
           </div>
 
-          <div className="mobile-score-box team-b">
-            <span className="mobile-score-lbl">B:</span>
-            <span className="mobile-score-val">{gameState.teamPoints?.B ?? 0}</span>
+          {/* Team B Score Pill */}
+          <div className="nav-score-pill team-b">
+            <span className="team-indicator-dot b">●</span>
+            <span className="score-lbl">TEAM B:</span>
+            <strong className="score-num">{gameState.teamPoints?.B ?? 0}</strong>
+            <span className="score-won">({gameState.gameScore?.teamB ?? 0})</span>
           </div>
         </div>
 
-        {/* Right: Quick Menu Trigger Button */}
-        <div className="mobile-hud-right">
-          <button
-            className="mobile-btn-icon"
-            onClick={onToggleChat}
-            title="Chat & Log"
+        {/* Right: Quick Links & User Profile Pill */}
+        <div className="esports-nav-right">
+          {/* Quick Nav Links (Desktop) */}
+          <div className="nav-action-links">
+            <button
+              type="button"
+              className="nav-link-btn"
+              onClick={onToggleRules}
+              title="Game Rules & Points"
+            >
+              ℹ️ Rules
+            </button>
+            <button
+              type="button"
+              className="nav-link-btn"
+              onClick={onToggleChat}
+              title="Table Chat & Move Log"
+            >
+              💬 Chat
+            </button>
+            <button
+              type="button"
+              className="nav-link-btn"
+              onClick={onToggleSettings}
+              title="Audio & Game Settings"
+            >
+              ⚙️ Settings
+            </button>
+          </div>
+
+          {/* User Profile Pill matching reference image */}
+          <div
+            className="esports-profile-pill"
+            onClick={() => setShowMobileDrawer(!showMobileDrawer)}
+            title="User Profile & Quick Menu"
           >
-            💬
-          </button>
+            <div className="profile-pill-avatar">
+              <img src={userAvatar} alt="Avatar" className="profile-img" />
+            </div>
+            <div className="profile-pill-meta">
+              <span className="profile-username">{currentPlayer?.username || 'You'}</span>
+              <span className="profile-elo">3,290 ELO</span>
+            </div>
+            <span className="profile-arrow">▾</span>
+          </div>
+
+          {/* Mobile Drawer Hamburger Button */}
           <button
-            className="mobile-btn-menu"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            type="button"
+            className="mobile-hamburger-btn"
+            onClick={() => setShowMobileDrawer(!showMobileDrawer)}
             title="Menu"
           >
             ☰
@@ -213,46 +141,60 @@ const GameInfo: React.FC<GameInfoProps> = ({
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown Drawer */}
-      {showMobileMenu && (
-        <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
+      {/* Slide-out Mobile Menu Drawer */}
+      {showMobileDrawer && (
+        <div className="mobile-menu-overlay" onClick={() => setShowMobileDrawer(false)}>
           <div className="mobile-menu-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
-              <span className="gold-text" style={{ fontWeight: 800 }}>Game Menu</span>
-              <button className="mobile-menu-close" onClick={() => setShowMobileMenu(false)}>✕</button>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-bold text-sm">29 ARENA</span>
+                <span className="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">Menu</span>
+              </div>
+              <button
+                type="button"
+                className="mobile-menu-close"
+                onClick={() => setShowMobileDrawer(false)}
+              >
+                ✕
+              </button>
             </div>
+
             <div className="mobile-menu-items">
               <button
+                type="button"
                 className="mobile-menu-item"
                 onClick={() => {
-                  setShowMobileMenu(false);
+                  setShowMobileDrawer(false);
                   onToggleRules?.();
                 }}
               >
-                <span>ℹ️</span> 29 Game Rules & Points (নিয়মাবলী)
+                <span>ℹ️</span> Game Rules & Points (নিয়মাবলী)
               </button>
               <button
+                type="button"
                 className="mobile-menu-item"
                 onClick={() => {
-                  setShowMobileMenu(false);
-                  onToggleSettings?.();
-                }}
-              >
-                <span>⚙️</span> Audio & Settings (সেটিংস)
-              </button>
-              <button
-                className="mobile-menu-item"
-                onClick={() => {
-                  setShowMobileMenu(false);
+                  setShowMobileDrawer(false);
                   onToggleChat?.();
                 }}
               >
                 <span>💬</span> Table Chat & Move Log (চ্যাট)
               </button>
               <button
+                type="button"
+                className="mobile-menu-item"
+                onClick={() => {
+                  setShowMobileDrawer(false);
+                  onToggleSettings?.();
+                }}
+              >
+                <span>⚙️</span> Audio & Settings (সেটিংস)
+              </button>
+              <button
+                type="button"
                 className="mobile-menu-item danger"
                 onClick={() => {
-                  setShowMobileMenu(false);
+                  setShowMobileDrawer(false);
                   handleExitConfirm();
                 }}
               >

@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../game/useGameStore';
-import PlayerHand from '../components/PlayerHand';
+import PlayerHand, { SUIT_SYMBOLS } from '../components/PlayerHand';
 import GameInfo from '../components/GameInfo';
 import BiddingPanel from '../components/BiddingPanel';
 import TrumpSelection from '../components/TrumpSelection';
 import TableCards from '../components/TableCards';
 import AvatarPickerModal from '../components/AvatarPickerModal';
 import { getBotAvatar, getSavedAvatar, saveAvatar } from '../utils/avatar';
-
-// SVG Crests for In-Game
-const LionMiniCrest = () => (
-  <svg width="14" height="16" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z" fill="#0c2e24" stroke="#34d399" strokeWidth="1.5" />
-    <path d="M12 7L13.5 10H16L14 12L15 15L12 13.5L9 15L10 12L8 10H10.5L12 7Z" fill="#6ee7b7" />
-  </svg>
-);
-
-const GriffinMiniCrest = () => (
-  <svg width="14" height="16" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 1L2 4.5V13C2 19.5 6.3 25.5 12 27C17.7 25.5 22 19.5 22 13V4.5L12 1Z" fill="#29121a" stroke="#f87171" strokeWidth="1.5" />
-    <path d="M12 8L15 11L13 13L16 16L12 14L8 16L11 13L9 11L12 8Z" fill="#fca5a5" />
-  </svg>
-);
 
 interface ChatMessage {
   id: string;
@@ -37,44 +22,37 @@ const GameTable: React.FC = () => {
   const [showChatModal, setShowChatModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [activeRightTab, setActiveRightTab] = useState<'history' | 'chat'>('history');
 
   // Settings
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [autoPassLow, setAutoPassLow] = useState(false);
 
   // In-Game Chat Messages
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: '1', sender: 'Dealer', text: 'Welcome to Royal 29 Card Room! Enjoy the game.', isSystem: true },
+    { id: '1', sender: 'Dealer', text: 'Welcome to 29 ARENA! Match is live.', isSystem: true },
   ]);
   const [chatInput, setChatInput] = useState('');
 
-  // Track game actions in chat log
+  // Sync game moves into chat / move log
   useEffect(() => {
     if (!gameState) return;
-
     if (gameState.phase === 'BIDDING' && gameState.highestBid) {
       const bidder = gameState.players.find((p) => p.seat === gameState.winningBidder);
-      const log = `${bidder?.username || 'Player'} placed highest bid: ${gameState.highestBid}`;
+      const name = bidder?.username || `Seat ${gameState.winningBidder}`;
       setMessages((prev) => {
-        if (prev[prev.length - 1]?.text === log) return prev;
-        return [...prev, { id: String(Date.now()), sender: 'Table', text: log, isSystem: true }];
+        const last = prev[prev.length - 1];
+        const logText = `${name} bid ${gameState.highestBid} points!`;
+        if (last && last.text === logText) return prev;
+        return [...prev, { id: String(Date.now()), sender: 'Bidding', text: logText, isSystem: true }];
       });
     }
 
     if (gameState.phase === 'PLAYING' && gameState.trumpRevealed && gameState.trumpSuit) {
-      const log = `Trump revealed: ${gameState.trumpSuit.toUpperCase()}!`;
       setMessages((prev) => {
-        if (prev[prev.length - 1]?.text === log) return prev;
-        return [...prev, { id: String(Date.now()), sender: 'Table', text: log, isSystem: true }];
-      });
-    }
-
-    if (gameState.lastCompletedTrick && gameState.lastCompletedTrick.winner) {
-      const winner = gameState.players.find((p) => p.seat === gameState.lastCompletedTrick?.winner);
-      const log = `🏆 ${winner?.username || 'Player'} won Trick #${gameState.completedTricks.length} (+${gameState.lastCompletedTrick.points} pts)`;
-      setMessages((prev) => {
-        if (prev[prev.length - 1]?.text === log) return prev;
-        return [...prev, { id: String(Date.now()), sender: 'Table', text: log, isSystem: true }];
+        const last = prev[prev.length - 1];
+        const logText = `Trump revealed: ${gameState.trumpSuit?.toUpperCase()}!`;
+        if (last && last.text === logText) return prev;
+        return [...prev, { id: String(Date.now()), sender: 'Trump', text: logText, isSystem: true }];
       });
     }
   }, [gameState?.phase, gameState?.highestBid, gameState?.trumpRevealed, gameState?.trumpSuit, gameState?.completedTricks?.length]);
@@ -82,9 +60,9 @@ const GameTable: React.FC = () => {
   if (!gameState) {
     return (
       <div className="connection-screen">
-        <div className="connection-logo">২৯</div>
+        <div className="connection-logo">29 ARENA</div>
         <div className="loading-spinner" />
-        <p style={{ color: 'var(--gold-light)' }}>Loading table...</p>
+        <p className="loading-text">Connecting to arena...</p>
         <button onClick={leaveGame} className="btn-join-gold" style={{ marginTop: '1rem' }}>
           Return to Lobby
         </button>
@@ -127,218 +105,191 @@ const GameTable: React.FC = () => {
 
   const isMyTurn = gameState.currentTurn === mySeat;
   const isBiddingPhase = gameState.phase === 'BIDDING';
-  const isMyBiddingTurn = isBiddingPhase && isMyTurn;
 
+  // Render Pill-Shaped Player Pod matching reference image
   const renderPlayerPod = (seat: number, directionClass: string, label: string) => {
     const player = getPlayerAtSeat(seat);
     const isCurrentTurn = gameState.currentTurn === seat;
     const isDealer = gameState.dealer === seat;
     const isWinningBidder = gameState.winningBidder === seat;
-    const isTrickWinner = trickCelebration && trickCelebration.winnerSeat === seat;
+    const isTrickWinner = trickCelebration?.winnerSeat === seat;
     const isTeamA = [1, 3].includes(seat);
-    const cardCount = player?.hand?.length ?? (isBiddingPhase ? 4 : 8);
     const isBot = player?.isBot || false;
     const isMe = seat === mySeat;
 
     const avatarSrc = isMe
       ? avatar || player?.avatar || getSavedAvatar()
-      : player?.avatar || (isBot ? getBotAvatar(seat) : getBotAvatar(seat));
+      : player?.avatar || getBotAvatar(seat);
 
     const wonTricks = (gameState.completedTricks || []).filter((t) => t.winner === seat);
     const wonPoints = wonTricks.reduce((acc, t) => acc + (t.points || 0), 0);
 
     return (
       <div
-        className={`stadium-player-pod ${directionClass} ${
+        className={`esports-player-pill ${directionClass} ${
           isCurrentTurn ? 'is-turn-active' : ''
         } ${isTrickWinner ? 'is-trick-winner' : ''}`}
         key={seat}
       >
-        {/* Active Turn Floating Pill */}
-        {isCurrentTurn && (
-          <div className="active-turn-pill animate-bounce-subtle">
-            <span className="turn-pulse-dot" />
-            <span>{isMe ? 'তোমার চাল' : `${player?.username || label} এর চাল`}</span>
-          </div>
-        )}
-
-        {/* Circular Avatar Ring with Gold Rim */}
         <div
-          className={`stadium-avatar-ring ${isMe ? 'is-me-clickable' : ''} ${
-            isTrickWinner ? 'is-winner-ring' : ''
-          }`}
+          className={`esports-avatar-wrap ${isMe ? 'is-me-clickable' : ''}`}
           onClick={() => isMe && setShowAvatarModal(true)}
           title={isMe ? 'Click to change avatar / ছবি পরিবর্তন করুন' : player?.username}
         >
-          {isDealer && <div className="seat-badge dealer-badge" title="Dealer">D</div>}
-          {isWinningBidder && <div className="seat-badge bidder-badge" title="Winning Bidder">👑</div>}
-          {isTrickWinner && <div className="seat-badge winner-sparkle" title="Won Trick">★</div>}
-
-          <div className="stadium-avatar-inner">
-            <img
-              src={avatarSrc}
-              alt={player?.username || `Seat ${seat}`}
-              className="stadium-avatar-img"
-            />
-          </div>
-
-          {isMe && <span className="avatar-edit-badge" title="Edit avatar">📷</span>}
+          <img
+            src={avatarSrc}
+            alt={player?.username || `Seat ${seat}`}
+            className="esports-avatar-img"
+          />
+          {isCurrentTurn && <span className="timer-chip">5s</span>}
         </div>
 
-        {/* Player Meta Box */}
-        <div className="stadium-player-meta">
-          <div className="player-name-chip">
-            <span className="player-alias-text">
+        <div className="esports-player-meta">
+          <div className="player-name-row">
+            <span className="player-name-text">
               {isMe ? `${player?.username || 'You'} (You)` : player?.username || label}
             </span>
             {isBot && <span className="bot-chip">BOT</span>}
           </div>
-
-          <div className="player-team-pill">
-            {isTeamA ? <LionMiniCrest /> : <GriffinMiniCrest />}
-            <span style={{ color: isTeamA ? '#6ee7b7' : '#fca5a5', fontWeight: 600 }}>
-              Team {isTeamA ? 'A' : 'B'}
-            </span>
-          </div>
-
-          {/* Won Tricks Indicator Badge */}
-          {wonTricks.length > 0 && (
-            <div
-              className={`player-won-tricks-pill ${isTrickWinner ? 'highlight-won' : ''}`}
-              title={`${wonTricks.length} tricks won this round (${wonPoints} points)`}
-            >
-              <span className="trophy-mini">🏆</span>
-              <span>{wonTricks.length} চাল ({wonPoints} pts)</span>
-            </div>
-          )}
-
-          {!isMe && (
-            <div className="player-hand-backs" title={`${cardCount} cards remaining`}>
-              {Array.from({ length: Math.min(cardCount, 8) }).map((_, i) => (
-                <div key={i} className="mini-card-back-chip" />
-              ))}
-            </div>
-          )}
+          <span className="player-elo-text">
+            {isMe ? '3,290 ELO • ' : ''}Team {isTeamA ? 'A' : 'B'}
+          </span>
         </div>
+
+        {wonTricks.length > 0 && (
+          <span className="won-tricks-badge" title={`${wonTricks.length} tricks won (${wonPoints} pts)`}>
+            🏆 {wonTricks.length}
+          </span>
+        )}
+
+        {isDealer && <span className="dealer-badge" title="Dealer">D</span>}
+        {isWinningBidder && <span className="bidder-badge" title="Winning Bidder">👑</span>}
       </div>
     );
   };
 
-  const teamATricks = (gameState.completedTricks || []).filter((t) => [1, 3].includes(t.winner!)).length;
-  const teamBTricks = (gameState.completedTricks || []).filter((t) => [2, 4].includes(t.winner!)).length;
-
   return (
-    <div className="stadium-viewport">
-      {/* Top Stadium Curved Notch Header */}
+    <div className="esports-viewport">
+      {/* Top Header matching reference image */}
       <GameInfo
         onToggleRules={() => setShowRulesModal(true)}
         onToggleChat={() => setShowChatModal(true)}
         onToggleSettings={() => setShowSettingsModal(true)}
       />
 
-      {/* Main 3-Column Layout Container */}
-      <div className="stadium-three-columns">
-        {/* Left Column: Desktop Scoreboard Panel */}
-        <aside className="desktop-scoreboard-card">
-          <div className="side-card-header">
-            <h3 className="side-title gold-text">২৯ - 29 Match</h3>
-            <span className="side-sub-badge">Round {gameState.roundNumber || 1}</span>
-          </div>
+      {/* Sub-header Meta Line */}
+      <div className="esports-meta-bar">
+        <div>
+          <strong className="text-white">29 Championship Match</strong>
+          <span className="meta-sep">•</span>
+          <span>Round {gameState.roundNumber || 1} • Hand #582049509</span>
+        </div>
+        <div className="meta-server-pill">
+          <span className="server-dot">●</span>
+          <span>Server Live (24ms)</span>
+        </div>
+      </div>
 
-          <div className="scoreboard-teams-table">
-            <div className="score-row team-a-row">
-              <div className="team-meta">
-                <LionMiniCrest />
-                <div>
-                  <span className="team-name">Team A (1 &amp; 3)</span>
-                  <span className="team-tricks-count">{teamATricks} চাল জিতেছেন</span>
-                </div>
+      {/* Main 3-Column Arena Container */}
+      <div className="esports-arena-grid">
+        
+        {/* Left Column: Your Stats & Contract Card */}
+        <aside className="esports-left-stats-panel">
+          {/* Your Stats Card */}
+          <div className="stats-box-card">
+            <div className="stats-header-title">Your Stats</div>
+            <div className="stats-metric-rows">
+              <div className="metric-row">
+                <span className="metric-label">ELO</span>
+                <span className="metric-val font-bold">3,290</span>
               </div>
-              <div className="team-scores">
-                <span className="current-pts">{gameState.teamPoints?.A ?? 0} pts</span>
-                <span className="total-match-pts">Won: {gameState.gameScore?.teamA ?? 0}</span>
+              <div className="metric-row">
+                <span className="metric-label">Win rate</span>
+                <span className="metric-val">61%</span>
+              </div>
+              <div className="metric-row">
+                <span className="metric-label">Accuracy</span>
+                <span className="metric-val">82%</span>
+              </div>
+              <div className="metric-row">
+                <span className="metric-label">Session</span>
+                <span className="metric-val session-green">+12 ELO</span>
+              </div>
+              <div className="metric-row pt-1 border-t border-white/5">
+                <span className="metric-label">Team A Score</span>
+                <span className="metric-val team-a-val">{gameState.teamPoints?.A ?? 0} pts</span>
+              </div>
+              <div className="metric-row">
+                <span className="metric-label">Team B Score</span>
+                <span className="metric-val team-b-val">{gameState.teamPoints?.B ?? 0} pts</span>
               </div>
             </div>
+          </div>
 
-            <div className="score-row team-b-row">
-              <div className="team-meta">
-                <GriffinMiniCrest />
-                <div>
-                  <span className="team-name">Team B (2 &amp; 4)</span>
-                  <span className="team-tricks-count">{teamBTricks} চাল জিতেছেন</span>
-                </div>
-              </div>
-              <div className="team-scores">
-                <span className="current-pts">{gameState.teamPoints?.B ?? 0} pts</span>
-                <span className="total-match-pts">Won: {gameState.gameScore?.teamB ?? 0}</span>
-              </div>
+          {/* Next Rank Card */}
+          <div className="stats-box-card">
+            <div className="stats-header-title">Next Rank</div>
+            <div className="rank-name-line">Master • 2,200 ELO</div>
+            <div className="rank-progress-bar">
+              <div className="rank-progress-fill" style={{ width: '75%' }}></div>
             </div>
           </div>
 
-          <div className="scoreboard-contract-box">
-            <div className="contract-header">CURRENT CONTRACT</div>
-            <div className="contract-info-line">
+          {/* Current Contract Box */}
+          <div className="stats-box-card">
+            <div className="stats-header-title">Current Contract</div>
+            <div className="contract-line">
               <span>Target Bid:</span>
-              <strong className="gold-text">
-                {gameState.highestBid ? `${gameState.highestBid} pts` : 'In Bidding'}
-              </strong>
+              <strong className="contract-gold">{gameState.highestBid ? `${gameState.highestBid} pts` : 'In Bidding'}</strong>
             </div>
-            <div className="contract-info-line">
-              <span>Winning Bidder:</span>
-              <span>
-                {gameState.winningBidder
-                  ? getPlayerAtSeat(gameState.winningBidder)?.username || `Seat ${gameState.winningBidder}`
-                  : 'Pending'}
-              </span>
+            <div className="contract-line">
+              <span>Bidder:</span>
+              <span>{gameState.winningBidder ? getPlayerAtSeat(gameState.winningBidder)?.username || `Seat ${gameState.winningBidder}` : 'Pending'}</span>
             </div>
-            <div className="contract-info-line">
-              <span>Trump Status:</span>
-              <span className={gameState.trumpRevealed ? 'gold-text' : 'muted-text'}>
-                {gameState.trumpRevealed
-                  ? `${gameState.trumpSuit?.toUpperCase() || ''} (Revealed)`
-                  : 'Secret (Hidden)'}
+            <div className="contract-line">
+              <span>Trump:</span>
+              <span className={gameState.trumpRevealed ? 'trump-open-text' : 'trump-secret-text'}>
+                {gameState.trumpRevealed ? `${gameState.trumpSuit?.toUpperCase()} (Open)` : 'Secret (Hidden)'}
               </span>
             </div>
           </div>
 
-          {/* Quick Rules Points Cheat Sheet */}
-          <div className="points-cheat-sheet">
-            <div className="cheat-title">Card Points</div>
-            <div className="cheat-grid">
-              <span className="cheat-item">J: 3pts</span>
-              <span className="cheat-item">9: 2pts</span>
-              <span className="cheat-item">A: 1pt</span>
-              <span className="cheat-item">10: 1pt</span>
+          {/* Card Points Cheat Sheet */}
+          <div className="stats-box-card cheat-sheet">
+            <div className="stats-header-title">Card Points</div>
+            <div className="cheat-grid-2x2">
+              <span className="cheat-badge">J = 3 pts</span>
+              <span className="cheat-badge">9 = 2 pts</span>
+              <span className="cheat-badge">A = 1 pt</span>
+              <span className="cheat-badge">10 = 1 pt</span>
             </div>
           </div>
         </aside>
 
-        {/* Center Column: The Stadium Rounded Felt Arena */}
-        <main className="stadium-center-column">
-          <div className="felt-stadium-rim">
-            <div className="felt-stadium-inner">
-              {/* Stadium Felt Watermark */}
-              <div className="felt-center-watermark">২৯</div>
+        {/* Center Column: Matte Oval Stadium Felt Table + Action Console */}
+        <main className="esports-center-arena">
+          <div className="esports-oval-table">
+            <div className="esports-inner-felt">
+              {/* Table Watermark */}
+              <div className="esports-watermark">29</div>
 
-              {/* 4 Player Pods */}
+              {/* 4 Player Pods (matching reference image) */}
               {renderPlayerPod(northSeat, 'pos-north', 'Partner')}
               {renderPlayerPod(westSeat, 'pos-west', 'Opponent Left')}
               {renderPlayerPod(eastSeat, 'pos-east', 'Opponent Right')}
               {renderPlayerPod(southSeat, 'pos-south', 'You')}
 
-              {/* Center Trick Stage OR Center Bidding Stage */}
-              {isBiddingPhase ? (
-                <div className="center-bidding-stage">
-                  <BiddingPanel />
-                </div>
-              ) : (
-                <TableCards mySeat={mySeat} />
-              )}
+              {/* Center Trick Stage */}
+              <TableCards mySeat={mySeat} />
             </div>
           </div>
 
-          {/* Bottom Curved Fan-Out Hand Cards */}
-          <div className="stadium-hand-dock">
+          {/* Bottom Console: Bidding Controls during Bidding / Hand during Playing */}
+          <div className="esports-bottom-dock">
+            {isBiddingPhase && (
+              <BiddingPanel />
+            )}
+
             {currentPlayer && (
               <PlayerHand
                 hand={currentPlayer.hand || []}
@@ -349,16 +300,46 @@ const GameTable: React.FC = () => {
           </div>
         </main>
 
-        {/* Right Column: Live Table Chat & Move Log */}
-        <aside className="desktop-side-card desktop-right-panel">
+        {/* Right Column: History & Chat Tabs matching reference image */}
+        <aside className="esports-right-history-panel">
+          <div className="history-tab-headers">
+            <button
+              type="button"
+              className={`history-tab-btn ${activeRightTab === 'history' ? 'active' : ''}`}
+              onClick={() => setActiveRightTab('history')}
+            >
+              History
+            </button>
+            <button
+              type="button"
+              className={`history-tab-btn ${activeRightTab === 'chat' ? 'active' : ''}`}
+              onClick={() => setActiveRightTab('chat')}
+            >
+              Chat
+            </button>
+          </div>
 
-          {/* Live Game Log & Table Chat */}
-          <div className="game-chat-card">
-            <div className="side-card-header">
-              <h3 className="side-title gold-text">Table Chat &amp; Log</h3>
-              <span className="live-indicator">● LIVE</span>
+          {activeRightTab === 'history' ? (
+            <div className="history-trick-list">
+              {(gameState.completedTricks || []).length === 0 ? (
+                <div className="history-empty-text">No tricks played yet this round.</div>
+              ) : (
+                (gameState.completedTricks || []).map((trick, idx) => (
+                  <div key={idx} className="esports-history-row">
+                    <div className="history-cards-group">
+                      {trick.plays.map((p, i) => (
+                        <span key={i} className={`history-card-chip ${['hearts', 'diamonds'].includes(p.card.suit) ? 'red' : 'black'}`}>
+                          {p.card.rank}{SUIT_SYMBOLS[p.card.suit]}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="history-pts">+{trick.points} pts</span>
+                    <span className="history-time">{trick.winner === mySeat ? 'You' : getPlayerAtSeat(trick.winner!)?.username || `Seat ${trick.winner}`}</span>
+                  </div>
+                ))
+              )}
             </div>
-
+          ) : (
             <div className="chat-messages-container">
               {messages.map((m) => (
                 <div
@@ -372,22 +353,23 @@ const GameTable: React.FC = () => {
                 </div>
               ))}
             </div>
+          )}
 
-            <form onSubmit={handleSendChat} className="chat-input-bar">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Type a message / বার্তা লিখুন..."
-                className="chat-field"
-                maxLength={80}
-              />
-              <button type="submit" className="btn-chat-send" title="Send message">
-                ➤
-              </button>
-            </form>
-          </div>
+          <form onSubmit={handleSendChat} className="chat-input-bar">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Send message..."
+              className="chat-field"
+              maxLength={80}
+            />
+            <button type="submit" className="btn-chat-send" title="Send message">
+              ➤
+            </button>
+          </form>
         </aside>
+
       </div>
 
       {/* Trump Selection Modal */}
@@ -452,51 +434,25 @@ const GameTable: React.FC = () => {
       {/* Rules Modal */}
       {showRulesModal && (
         <div className="modal-overlay" onClick={() => setShowRulesModal(false)}>
-          <div
-            className="modal-box-sleek"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '520px' }}
-          >
-            <h2 className="modal-title-sleek gold-text">২৯ Game Rules &amp; Points</h2>
-            <div className="rules-grid" style={{ width: '100%', margin: '1rem 0' }}>
-              <div className="rule-chip">
-                <div className="rule-chip-val">3 pts</div>
-                <div className="rule-chip-label">Jacks (J)</div>
-              </div>
-              <div className="rule-chip">
-                <div className="rule-chip-val">2 pts</div>
-                <div className="rule-chip-label">Nines (9)</div>
-              </div>
-              <div className="rule-chip">
-                <div className="rule-chip-val">1 pt</div>
-                <div className="rule-chip-label">Aces (A)</div>
-              </div>
-              <div className="rule-chip">
-                <div className="rule-chip-val">1 pt</div>
-                <div className="rule-chip-label">Tens (10)</div>
-              </div>
-              <div className="rule-chip">
-                <div className="rule-chip-val">0 pts</div>
-                <div className="rule-chip-label">K, Q, 8, 7</div>
-              </div>
-              <div className="rule-chip">
-                <div className="rule-chip-val">+1 pt</div>
-                <div className="rule-chip-label">Last Trick</div>
-              </div>
+          <div className="modal-box-sleek" onClick={(e) => e.stopPropagation()}>
+            <div className="side-card-header" style={{ marginBottom: '1rem' }}>
+              <h2 className="modal-title-sleek gold-text">29 Game Rules & Points</h2>
+              <button onClick={() => setShowRulesModal(false)} className="btn-close-modal">✕</button>
             </div>
-            <ul className="rules-list" style={{ marginBottom: '1.5rem' }}>
-              <li>Power ranking: J &gt; 9 &gt; A &gt; 10 &gt; K &gt; Q &gt; 8 &gt; 7</li>
-              <li>Teams: Seats 1 &amp; 3 (Team A) vs Seats 2 &amp; 4 (Team B)</li>
-              <li>Highest bidder chooses the secret Trump suit</li>
-              <li>Players must follow the lead suit if they hold any cards of that suit</li>
-            </ul>
-            <button
-              className="btn-join-gold"
-              onClick={() => setShowRulesModal(false)}
-              style={{ width: '100%', padding: '0.8rem' }}
-            >
-              Close Guide
-            </button>
+            <div className="rules-scrollable">
+              <p><strong>Goal:</strong> The bidder's team must score at least the target points bid.</p>
+              <h4 style={{ color: '#ffd700', marginTop: '0.8rem' }}>Card Values:</h4>
+              <ul style={{ paddingLeft: '1.2rem', marginTop: '0.4rem', color: '#cbd5e1' }}>
+                <li><strong>Jack (J):</strong> 3 Points each</li>
+                <li><strong>Nine (9):</strong> 2 Points each</li>
+                <li><strong>Ace (A):</strong> 1 Point each</li>
+                <li><strong>Ten (10):</strong> 1 Point each</li>
+                <li><strong>King, Queen, 8, 7:</strong> 0 Points</li>
+              </ul>
+              <p style={{ marginTop: '0.8rem', color: '#94a3b8', fontSize: '0.8rem' }}>
+                Last trick winner receives 1 bonus point (Total = 28 + 1 = 29 points).
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -504,83 +460,21 @@ const GameTable: React.FC = () => {
       {/* Settings Modal */}
       {showSettingsModal && (
         <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
-          <div
-            className="modal-box-sleek"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '440px' }}
-          >
-            <h2 className="modal-title-sleek gold-text">Settings / সেটিংস</h2>
-            <div className="settings-list-rows" style={{ margin: '1.2rem 0' }}>
-              <div className="settings-toggle-row">
-                <span>Sound Effects (শব্দ)</span>
+          <div className="modal-box-sleek" onClick={(e) => e.stopPropagation()}>
+            <div className="side-card-header" style={{ marginBottom: '1rem' }}>
+              <h2 className="modal-title-sleek gold-text">Game Settings</h2>
+              <button onClick={() => setShowSettingsModal(false)} className="btn-close-modal">✕</button>
+            </div>
+            <div className="settings-list-rows">
+              <label className="settings-toggle-row">
+                <span>Sound Effects (সাউন্ড)</span>
                 <input
                   type="checkbox"
                   checked={soundEnabled}
                   onChange={(e) => setSoundEnabled(e.target.checked)}
                 />
-              </div>
-              <div className="settings-toggle-row">
-                <span>Auto-Pass Low Hands</span>
-                <input
-                  type="checkbox"
-                  checked={autoPassLow}
-                  onChange={(e) => setAutoPassLow(e.target.checked)}
-                />
-              </div>
+              </label>
             </div>
-            <button
-              className="btn-join-gold"
-              onClick={() => setShowSettingsModal(false)}
-              style={{ width: '100%', padding: '0.8rem' }}
-            >
-              Save &amp; Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile Chat Modal */}
-      {showChatModal && (
-        <div className="modal-overlay" onClick={() => setShowChatModal(false)}>
-          <div
-            className="modal-box-sleek"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: '440px', maxHeight: '80vh' }}
-          >
-            <h2 className="modal-title-sleek gold-text">Game Chat &amp; Log</h2>
-            <div className="chat-messages-container" style={{ maxHeight: '260px' }}>
-              {messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={`chat-bubble ${m.isSystem ? 'system-msg' : ''} ${
-                    m.sender === currentPlayer?.username ? 'my-msg' : ''
-                  }`}
-                >
-                  <span className="chat-sender">{m.sender}:</span>
-                  <span className="chat-text">{m.text}</span>
-                </div>
-              ))}
-            </div>
-            <form onSubmit={handleSendChat} className="chat-input-bar">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Type a message..."
-                className="chat-field"
-                maxLength={80}
-              />
-              <button type="submit" className="btn-chat-send">
-                ➤
-              </button>
-            </form>
-            <button
-              className="btn-modal-cancel"
-              onClick={() => setShowChatModal(false)}
-              style={{ width: '100%', marginTop: '0.8rem' }}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
@@ -588,12 +482,13 @@ const GameTable: React.FC = () => {
       {/* Avatar Picker Modal */}
       {showAvatarModal && (
         <AvatarPickerModal
-          currentAvatar={avatar || getSavedAvatar()}
-          onSelect={(newAv) => {
-            saveAvatar(newAv);
-            setAvatar(newAv);
-          }}
+          currentAvatar={avatar || currentPlayer?.avatar || getSavedAvatar()}
           onClose={() => setShowAvatarModal(false)}
+          onSelect={(newAvatar: string) => {
+            setAvatar(newAvatar);
+            saveAvatar(newAvatar);
+            setShowAvatarModal(false);
+          }}
         />
       )}
     </div>
