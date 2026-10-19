@@ -1,37 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useGameStore } from '../game/useGameStore';
 import { getValidBids } from '@shared/utils/bid';
 import { DEFAULT_GAME_RULES } from '@shared/constants/gameRules';
+import { playBidSound } from '../utils/audio';
 
-const PRESET_BIDS = [16, 17, 20, 24, 28];
+const BiddingPanel: React.FC = () => {
+  const { gameState, playerId, placeBid, passBid } = useGameStore();
 
-interface BiddingPanelProps {
-  onPlaySelectedCard?: () => void;
-  canPlaySelectedCard?: boolean;
-}
-
-const BiddingPanel: React.FC<BiddingPanelProps> = ({
-  onPlaySelectedCard,
-  canPlaySelectedCard = false,
-}) => {
-  const { gameState, playerId, placeBid, passBid, leaveGame } = useGameStore();
+  if (!gameState || gameState.phase !== 'BIDDING') return null;
 
   const validBids = getValidBids(
-    gameState?.highestBid || null,
-    gameState?.settings || DEFAULT_GAME_RULES
+    gameState.highestBid || null,
+    gameState.settings || DEFAULT_GAME_RULES
   );
   const minValidBid = validBids.length > 0 ? validBids[0] : 16;
-
-  const [selectedBid, setSelectedBid] = useState<number>(minValidBid);
-
-  // Sync selected bid if minValidBid increases beyond it
-  React.useEffect(() => {
-    if (selectedBid < minValidBid && minValidBid <= 28) {
-      setSelectedBid(minValidBid);
-    }
-  }, [minValidBid, selectedBid]);
-
-  if (!gameState) return null;
 
   const currentPlayer =
     gameState.players.find((p) => p.id === playerId) ||
@@ -43,164 +25,86 @@ const BiddingPanel: React.FC<BiddingPanelProps> = ({
     0
   );
 
-  const highestBidderPlayer = gameState.players.find(
-    (p) => p.seat === gameState.winningBidder
-  );
+  const isMyTurn = currentPlayer?.seat === gameState.currentTurn;
+  const currentBidder = gameState.players.find((p) => p.seat === gameState.currentTurn);
+  const highestBidder = gameState.players.find((p) => p.seat === gameState.winningBidder);
 
-  const isMyBiddingTurn = currentPlayer?.seat === gameState.currentTurn;
-  const currentBidderPlayer = gameState.players.find(
-    (p) => p.seat === gameState.currentTurn
-  );
-
-  const isBiddingPhase = gameState.phase === 'BIDDING';
-  const isPlayingPhase = gameState.phase === 'PLAYING';
-
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number(e.target.value);
-    setSelectedBid(val);
+  const handlePlaceBid = (bidVal: number) => {
+    if (!isMyTurn) return;
+    playBidSound();
+    placeBid(bidVal);
   };
 
-  const handlePresetClick = (bid: number) => {
-    if (bid >= minValidBid) {
-      setSelectedBid(bid);
-    }
+  const handlePass = () => {
+    if (!isMyTurn) return;
+    passBid();
   };
 
-  const isSelectedBidValid = isMyBiddingTurn && validBids.includes(selectedBid);
+  // Generate range 16 to 28
+  const allBids = Array.from({ length: 13 }, (_, i) => 16 + i);
 
   return (
-    <div className="esports-bidding-dock">
-      {/* Top Slider & Presets (only during Bidding Phase) */}
-      {isBiddingPhase && (
-        <div className="esports-slider-section">
-          {/* Active Turn Announcement Pill */}
-          <div className={`esports-bid-turn-pill ${isMyBiddingTurn ? 'my-turn' : 'waiting-turn'}`}>
-            {isMyBiddingTurn ? (
-              <span className="turn-glow-text">👉 আপনার বিডের পালা / YOUR TURN TO BID</span>
-            ) : (
-              <span className="turn-waiting-text">
-                ⏳ {currentBidderPlayer?.username || `Seat ${gameState.currentTurn}`} বিড করছেন...
-              </span>
-            )}
-            <span className="hand-points-chip" title="Your 4 cards point sum">
-              হাতে: {handPoints} pts
+    <div className="classic-bidding-console animate-fade-in">
+      {/* Top Banner: Turn Status & Info */}
+      <div className={`bidding-status-bar ${isMyTurn ? 'my-turn' : 'waiting'}`}>
+        <div className="status-left">
+          {isMyTurn ? (
+            <span className="turn-label active-glow">
+              👉 YOUR TURN TO BID
             </span>
-          </div>
+          ) : (
+            <span className="turn-label">
+              ⏳ {currentBidder?.username || `Seat ${gameState.currentTurn}`} is bidding...
+            </span>
+          )}
+        </div>
 
-          {/* Slider Range Bar */}
-          <div className="esports-slider-row">
-            <span className="slider-range-val">16</span>
-            <input
-              type="range"
-              min="16"
-              max="28"
-              value={selectedBid}
-              disabled={!isMyBiddingTurn}
-              onChange={handleSliderChange}
-              className="esports-bid-slider"
-            />
-            <span className="slider-range-val">28</span>
-          </div>
+        <div className="status-center">
+          <span className="info-tag">
+            Highest Bid: <strong>{gameState.highestBid ? `${gameState.highestBid} pts (${highestBidder?.username || `Seat ${gameState.winningBidder}`})` : 'None (Open 16)'}</strong>
+          </span>
+        </div>
 
-          {/* Preset Pills matching reference: Min, 17, 20, 24, All In */}
-          <div className="esports-presets-row">
-            <button
-              type="button"
-              className={`preset-pill ${selectedBid === minValidBid ? 'active' : ''}`}
-              disabled={!isMyBiddingTurn}
-              onClick={() => handlePresetClick(minValidBid)}
-            >
-              Min ({minValidBid})
-            </button>
-            {PRESET_BIDS.filter((b) => b > minValidBid).map((b) => (
+        <div className="status-right">
+          <span className="hand-pts-tag" title="Total points in your 4 cards">
+            Your Cards: <strong>{handPoints} pts</strong>
+          </span>
+        </div>
+      </div>
+
+      {/* Buttons Row: Pass + Direct Bid Buttons */}
+      <div className="bidding-buttons-row">
+        {/* Pass Button */}
+        <button
+          type="button"
+          className="btn-bid-pass"
+          disabled={!isMyTurn}
+          onClick={handlePass}
+          title="Pass your bid this round"
+        >
+          PASS
+        </button>
+
+        {/* 16 to 28 Numbers */}
+        <div className="bids-number-list">
+          {allBids.map((b) => {
+            const isValid = isMyTurn && validBids.includes(b);
+            const isMin = b === minValidBid && isMyTurn;
+
+            return (
               <button
                 key={b}
                 type="button"
-                className={`preset-pill ${selectedBid === b ? 'active' : ''}`}
-                disabled={!isMyBiddingTurn || b < minValidBid}
-                onClick={() => handlePresetClick(b)}
+                className={`btn-bid-num ${isValid ? 'is-valid' : 'is-disabled'} ${isMin ? 'is-min-suggested' : ''}`}
+                disabled={!isValid}
+                onClick={() => handlePlaceBid(b)}
+                title={isValid ? `Bid ${b} points` : `Minimum bid is ${minValidBid}`}
               >
-                {b === 28 ? 'All In (28)' : b === 20 ? '20 (Pot)' : b}
+                {b}
               </button>
-            ))}
-            <div className="preset-selected-display">
-              Target: <strong>{selectedBid}</strong>
-            </div>
-          </div>
+            );
+          })}
         </div>
-      )}
-
-      {/* Main 3 Action Buttons matching reference image (Fold / Bid / Play Card) */}
-      <div className="esports-actions-grid">
-        {/* 1. Red Action Button: FOLD / PASS */}
-        <button
-          type="button"
-          className="btn-esports-red"
-          disabled={!isBiddingPhase || !isMyBiddingTurn}
-          onClick={() => passBid()}
-          title="Fold / Pass this round (পাস)"
-        >
-          <span className="btn-main-label">Fold (পাস)</span>
-          <span className="btn-sub-label">Pass</span>
-        </button>
-
-        {/* 2. Crisp White Action Button: BID */}
-        <button
-          type="button"
-          className="btn-esports-white"
-          disabled={!isBiddingPhase || !isMyBiddingTurn || !isSelectedBidValid}
-          onClick={() => isSelectedBidValid && placeBid(selectedBid)}
-          title={`Bid ${selectedBid} points`}
-        >
-          <span className="btn-main-label">
-            {isBiddingPhase ? `Bid ${selectedBid} (বিড)` : 'Check'}
-          </span>
-          <span className="btn-sub-label">
-            {gameState.highestBid ? `Highest: ${gameState.highestBid}` : 'Open 16'}
-          </span>
-        </button>
-
-        {/* 3. Blue Glowing Action Button: RAISE / PLAY CARD */}
-        <button
-          type="button"
-          className="btn-esports-blue"
-          disabled={
-            isBiddingPhase
-              ? !isMyBiddingTurn || validBids.length === 0
-              : !canPlaySelectedCard
-          }
-          onClick={() => {
-            if (isBiddingPhase) {
-              if (validBids.length > 0) placeBid(validBids[0]);
-            } else if (onPlaySelectedCard) {
-              onPlaySelectedCard();
-            }
-          }}
-          title={isBiddingPhase ? 'Place Minimum Bid' : 'Play Selected Card (চাল দিন)'}
-        >
-          <span className="btn-main-label">
-            {isBiddingPhase ? `Bid Min (${minValidBid})` : 'Play Card (চালুন)'}
-          </span>
-          <span className="btn-sub-label">
-            {isBiddingPhase ? 'Quick Bid' : 'তোমার চাল'}
-          </span>
-        </button>
-      </div>
-
-      {/* Leave table link on right */}
-      <div className="esports-leave-row">
-        <button
-          type="button"
-          className="btn-leave-table-link"
-          onClick={() => {
-            if (window.confirm('Are you sure you want to leave the table? / আপনি কি খেলা ত্যাগ করতে চান?')) {
-              leaveGame();
-            }
-          }}
-        >
-          <span>🚪</span>
-          <span>Leave table</span>
-        </button>
       </div>
     </div>
   );

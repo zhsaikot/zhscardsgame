@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Card, Suit } from '@shared/types';
 import { useGameStore } from '../game/useGameStore';
+import { playCardSound } from '../utils/audio';
 
 interface PlayerHandProps {
   hand: Card[];
@@ -42,7 +43,8 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
       if (!isLegal) return;
 
       if (selectedCard?.id === card.id) {
-        // Double-click/second tap directly plays
+        // Second tap or click plays the card immediately!
+        playCardSound();
         playCard(card.id);
         setSelectedCard(null);
       } else {
@@ -56,6 +58,7 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
 
   const handlePlaySelected = () => {
     if (selectedCard && legalCardIds.includes(selectedCard.id)) {
+      playCardSound();
       playCard(selectedCard.id);
       setSelectedCard(null);
     }
@@ -65,73 +68,60 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
   const centerIndex = (count - 1) / 2;
 
   return (
-    <div className="player-hand-wrapper">
-      {/* Floating Action / Turn Play Prompt Bar */}
-      <div className="hand-action-bar">
-        {gameState?.phase === 'BIDDING' && (
-          <div className="hand-bidding-hint">
-            <span>💎 আপনার ৪টি কার্ড ও পয়েন্ট যাচাই করে বিড দিন (Review your cards)</span>
-          </div>
-        )}
-
+    <div className="classic-hand-wrapper">
+      {/* Turn Action Banner */}
+      <div className="hand-action-banner-row">
         {isPlayingPhase && isCurrentTurn && (
-          <div className="hand-turn-banner animate-pulse">
-            <span className="turn-banner-bilingual">তোমার চাল / YOUR TURN</span>
+          <div className="turn-play-prompt">
+            <span className="prompt-text-glow">YOUR TURN TO PLAY</span>
+            {leadSuit && (
+              <span className={`lead-suit-pill suit-${leadSuit}`}>
+                Lead Suit: {SUIT_SYMBOLS[leadSuit]} {leadSuit.toUpperCase()}
+              </span>
+            )}
             {selectedCard && legalCardIds.includes(selectedCard.id) && (
               <button
                 type="button"
-                className="btn-play-action-glow"
+                className="btn-play-card-action"
                 onClick={handlePlaySelected}
               >
                 <span>PLAY</span>
                 <span className="play-card-spec">
                   {selectedCard.rank}{SUIT_SYMBOLS[selectedCard.suit]}
                 </span>
-                <span className="play-bengali-sub">চাল দিন</span>
               </button>
             )}
           </div>
         )}
-
-        {/* Lead Suit Reminder */}
-        {isPlayingPhase && isCurrentTurn && leadSuit && (
-          <div className="lead-suit-badge">
-            <span className="lead-suit-label">Must Follow:</span>
-            <span className={`lead-suit-val suit-${leadSuit}`}>
-              {SUIT_SYMBOLS[leadSuit]} {leadSuit.toUpperCase()}
-            </span>
-          </div>
-        )}
       </div>
 
-      {/* Fan Arc Hand Cards */}
+      {/* Fan Cards */}
       {hand.length === 0 ? (
         <div className="empty-hand-notice">
           <div className="loading-spinner mini" />
           <span>Dealing cards...</span>
         </div>
       ) : (
-        <div className="fan-hand-container">
+        <div className="classic-fan-container">
           {hand.map((card, idx) => {
             const isSelected = selectedCard?.id === card.id;
             const isLegal = legalCardIds.includes(card.id);
             const canPlay = isPlayingPhase && isCurrentTurn && isLegal;
             const isRed = card.suit === 'hearts' || card.suit === 'diamonds';
 
-            // Parabolic fan geometry:
+            // Fan geometry
             const offset = idx - centerIndex;
-            const rotateDeg = offset * 3.8;
-            const translateYPx = Math.abs(offset) * 1.8;
+            const rotateDeg = offset * 3.5;
+            const translateYPx = Math.abs(offset) * 1.5;
 
-            // When selected, card straightens and pops up:
             const transformStyle = isSelected
-              ? 'translateY(-28px) scale(1.12) rotate(0deg)'
+              ? 'translateY(-24px) scale(1.1) rotate(0deg)'
               : `rotate(${rotateDeg}deg) translateY(${translateYPx}px)`;
 
             return (
               <div
                 key={card.id}
-                className={`fan-card-item ${isSelected ? 'is-selected' : ''} ${
+                className={`fan-card ${isSelected ? 'is-selected' : ''} ${
                   canPlay ? 'can-play' : ''
                 } ${!canPlay && isCurrentTurn && isPlayingPhase ? 'is-disabled' : ''} ${
                   isRed ? 'red-suit' : 'black-suit'
@@ -141,33 +131,28 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
                   zIndex: isSelected ? 50 : 10 + idx,
                 }}
                 onClick={() => handleCardClick(card)}
-                data-rank={card.rank}
-                data-suit={card.suit}
                 title={`${card.rank} of ${card.suit} (${card.pointValue} pts)`}
               >
-                {/* Point badge visible during bidding & play */}
+                {/* Point badge */}
                 {card.pointValue > 0 && (
-                  <div className="fan-card-point-badge">
+                  <div className="card-pt-badge">
                     +{card.pointValue}
                   </div>
                 )}
 
-                <div className="card-face">
-                  {/* Top-Left Corner */}
-                  <div className="card-corner top-left">
+                <div className="card-face-surface">
+                  <div className="corner top-left">
                     <span className="rank">{card.rank}</span>
-                    <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
+                    <span className="suit">{SUIT_SYMBOLS[card.suit]}</span>
                   </div>
 
-                  {/* Large Center Suit Symbol */}
-                  <div className="card-center">
-                    <span className="suit-symbol large">{SUIT_SYMBOLS[card.suit]}</span>
+                  <div className="center-symbol">
+                    <span>{SUIT_SYMBOLS[card.suit]}</span>
                   </div>
 
-                  {/* Bottom-Right Corner */}
-                  <div className="card-corner bottom-right">
+                  <div className="corner bottom-right">
                     <span className="rank">{card.rank}</span>
-                    <span className="suit-symbol">{SUIT_SYMBOLS[card.suit]}</span>
+                    <span className="suit">{SUIT_SYMBOLS[card.suit]}</span>
                   </div>
                 </div>
               </div>
