@@ -45,6 +45,18 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
     return player?.username || `Seat ${seat}`;
   };
 
+  // Cardinal position class for each played card
+  const getCardPositionClass = (seat: number) => {
+    const diff = (seat - mySeat + 4) % 4;
+    switch (diff) {
+      case 0: return 'card-pos-south'; // Bottom
+      case 1: return 'card-pos-west';  // Left
+      case 2: return 'card-pos-north'; // Top
+      case 3: return 'card-pos-east';  // Right
+      default: return 'card-pos-south';
+    }
+  };
+
   // Point badge formatter
   const formatCardPoints = (pts: number) => {
     if (pts === 1) return '1 pt';
@@ -84,14 +96,14 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
         )}
       </div>
 
-      {/* Cards Played in Center Side-by-Side Standings */}
-      <div className={`trick-cards-stand ${isFlying ? `cards-flight-group fly-to-${winnerDir}` : ''}`}>
+      {/* Cards Played in Cardinal Diamond Layout (North Top, South Bottom, West Left, East Right) */}
+      <div className={`trick-diamond-cluster ${isFlying ? `cards-flight-group fly-to-${winnerDir}` : ''}`}>
         {plays.length === 0 ? (
-          <div className="empty-trick-stand">
+          <div className="empty-trick-cluster">
             <span className="stand-lead-prompt">
               {gameState.phase === 'PLAYING'
-                ? 'Lead the first card of the trick'
-                : 'Waiting for trick play...'}
+                ? 'Lead the trick'
+                : 'Waiting for trick...'}
             </span>
           </div>
         ) : (
@@ -100,11 +112,12 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
             const suit = play.card.suit as Suit;
             const isRed = suit === 'hearts' || suit === 'diamonds';
             const isTrump = gameState.trumpSuit && suit === gameState.trumpSuit;
+            const posClass = getCardPositionClass(play.seat);
 
             return (
               <div
                 key={`${play.card.id}-${index}`}
-                className={`standing-trick-card ${isWinnerCard ? 'is-winner-card' : ''} ${
+                className={`diamond-card-slot ${posClass} ${isWinnerCard ? 'is-winner-card' : ''} ${
                   isRed ? 'red-suit' : 'black-suit'
                 } animate-card-drop`}
               >
@@ -135,23 +148,26 @@ const TableCards: React.FC<TableCardsProps> = ({ mySeat = 1 }) => {
                   {isWinnerCard && <div className="card-win-overlay">জয়ী</div>}
                 </div>
 
-                {/* Point Value Badge Underneath Card */}
-                <div
-                  className={`card-points-badge ${
-                    play.card.pointValue > 0 ? 'badge-has-pts' : 'badge-zero-pts'
-                  }`}
-                >
-                  {formatCardPoints(play.card.pointValue)}
-                </div>
+                {/* Meta details underneath card */}
+                <div className="card-under-meta">
+                  {/* Point Value Badge Underneath Card */}
+                  <div
+                    className={`card-points-badge ${
+                      play.card.pointValue > 0 ? 'badge-has-pts' : 'badge-zero-pts'
+                    }`}
+                  >
+                    {formatCardPoints(play.card.pointValue)}
+                  </div>
 
-                {/* Trump Cut Indicator */}
-                {isTrump && gameState.trumpRevealed && (
-                  <div className="card-trump-cut-tag">TRUMP</div>
-                )}
+                  {/* Trump Cut Indicator */}
+                  {isTrump && gameState.trumpRevealed && (
+                    <div className="card-trump-cut-tag">TRUMP</div>
+                  )}
 
-                {/* Player Name Tag Underneath Point Badge */}
-                <div className={`card-player-tag ${isWinnerCard ? 'tag-winner-player' : ''}`} title={getPlayerLabel(play.seat)}>
-                  {getPlayerLabel(play.seat)}
+                  {/* Player Name Tag Underneath Point Badge */}
+                  <div className={`card-player-tag ${isWinnerCard ? 'tag-winner-player' : ''}`} title={getPlayerLabel(play.seat)}>
+                    {getPlayerLabel(play.seat)}
+                  </div>
                 </div>
               </div>
             );

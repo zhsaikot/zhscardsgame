@@ -68,6 +68,12 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
     <div className="player-hand-wrapper">
       {/* Floating Action / Turn Play Prompt Bar */}
       <div className="hand-action-bar">
+        {gameState?.phase === 'BIDDING' && (
+          <div className="hand-bidding-hint">
+            <span>💎 আপনার ৪টি কার্ড ও পয়েন্ট যাচাই করে বিড দিন (Review your cards)</span>
+          </div>
+        )}
+
         {isPlayingPhase && isCurrentTurn && (
           <div className="hand-turn-banner animate-pulse">
             <span className="turn-banner-bilingual">তোমার চাল / YOUR TURN</span>
@@ -114,12 +120,12 @@ const PlayerHand: React.FC<PlayerHandProps> = ({ hand, isCurrentTurn, leadSuit }
 
             // Parabolic fan geometry:
             const offset = idx - centerIndex;
-            const rotateDeg = offset * 4.5;
-            const translateYPx = Math.abs(offset) * Math.abs(offset) * 2.2;
+            const rotateDeg = offset * 3.8;
+            const translateYPx = Math.abs(offset) * 1.8;
 
             // When selected, card straightens and pops up:
             const transformStyle = isSelected
-              ? 'translateY(-34px) scale(1.12) rotate(0deg)'
+              ? 'translateY(-28px) scale(1.12) rotate(0deg)'
               : `rotate(${rotateDeg}deg) translateY(${translateYPx}px)`;
 
             return (

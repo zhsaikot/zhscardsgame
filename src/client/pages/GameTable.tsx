@@ -326,20 +326,19 @@ const GameTable: React.FC = () => {
               {renderPlayerPod(eastSeat, 'pos-east', 'Opponent Right')}
               {renderPlayerPod(southSeat, 'pos-south', 'You')}
 
-              {/* Center Trick Stage */}
-              <TableCards mySeat={mySeat} />
+              {/* Center Trick Stage OR Center Bidding Stage */}
+              {isBiddingPhase ? (
+                <div className="center-bidding-stage">
+                  <BiddingPanel />
+                </div>
+              ) : (
+                <TableCards mySeat={mySeat} />
+              )}
             </div>
           </div>
 
           {/* Bottom Curved Fan-Out Hand Cards */}
           <div className="stadium-hand-dock">
-            {/* On mobile or during player bidding turn, float BiddingPanel */}
-            {isMyBiddingTurn && (
-              <div className="mobile-bidding-floating-dock">
-                <BiddingPanel />
-              </div>
-            )}
-
             {currentPlayer && (
               <PlayerHand
                 hand={currentPlayer.hand || []}
@@ -350,14 +349,8 @@ const GameTable: React.FC = () => {
           </div>
         </main>
 
-        {/* Right Column: Desktop Bidding Panel / Live Log & Chat */}
+        {/* Right Column: Live Table Chat & Move Log */}
         <aside className="desktop-side-card desktop-right-panel">
-          {/* If Bidding is active and user is on desktop, show BiddingPanel on top */}
-          {isBiddingPhase && (
-            <div className="desktop-bidding-wrapper">
-              <BiddingPanel />
-            </div>
-          )}
 
           {/* Live Game Log & Table Chat */}
           <div className="game-chat-card">

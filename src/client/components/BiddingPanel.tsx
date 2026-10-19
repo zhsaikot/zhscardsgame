@@ -27,8 +27,24 @@ const BiddingPanel: React.FC = () => {
     (p) => p.seat === gameState.winningBidder
   );
 
+  const isMyBiddingTurn = currentPlayer?.seat === gameState.currentTurn;
+  const currentBidderPlayer = gameState.players.find(
+    (p) => p.seat === gameState.currentTurn
+  );
+
   return (
-    <div className="bidding-panel-card">
+    <div className={`bidding-panel-card ${isMyBiddingTurn ? 'is-my-bid-turn' : 'is-waiting-bid'}`}>
+      {/* Turn status banner */}
+      <div className={`bidding-turn-banner ${isMyBiddingTurn ? 'my-turn-banner' : 'waiting-turn-banner'}`}>
+        {isMyBiddingTurn ? (
+          <span className="banner-text-glow">👉 আপনার বিডের পালা / YOUR TURN TO BID</span>
+        ) : (
+          <span className="banner-text-waiting">
+            ⏳ {currentBidderPlayer?.username || `Seat ${gameState.currentTurn}`} বিড করছেন...
+          </span>
+        )}
+      </div>
+
       {/* Header with Title and Current Bid Stats */}
       <div className="bidding-card-header">
         <div className="bidding-header-left">
@@ -42,7 +58,7 @@ const BiddingPanel: React.FC = () => {
           </span>
         </div>
 
-        <div className="bidding-hand-chip" title="Your first 4 cards point sum">
+        <div className="bidding-hand-chip" title="Your first 4 cards point sum (J=3, 9=2, A=1, 10=1)">
           <span className="hand-chip-lbl">Hand:</span>
           <span className="hand-chip-val">{handPoints} pts</span>
         </div>
@@ -51,7 +67,7 @@ const BiddingPanel: React.FC = () => {
       {/* 4x3 Grid of Bid Numbers (16 through 28) */}
       <div className="bidding-grid-container">
         {ALL_BID_NUMBERS.map((bid) => {
-          const isValid = validBids.includes(bid);
+          const isValid = isMyBiddingTurn && validBids.includes(bid);
           const isHighest = gameState.highestBid === bid;
 
           return (
@@ -64,7 +80,9 @@ const BiddingPanel: React.FC = () => {
               disabled={!isValid}
               onClick={() => isValid && placeBid(bid)}
               title={
-                isValid
+                !isMyBiddingTurn
+                  ? 'Waiting for your turn'
+                  : isValid
                   ? `Bid ${bid} points`
                   : bid <= (gameState.highestBid || 15)
                   ? `Must be higher than ${gameState.highestBid || 15}`
@@ -82,7 +100,8 @@ const BiddingPanel: React.FC = () => {
         <button
           type="button"
           className="btn-bid-pass-action"
-          onClick={() => passBid()}
+          disabled={!isMyBiddingTurn}
+          onClick={() => isMyBiddingTurn && passBid()}
           title="Pass this round / পাস করুন"
         >
           <span className="action-main">PASS</span>
@@ -92,13 +111,12 @@ const BiddingPanel: React.FC = () => {
         <button
           type="button"
           className="btn-bid-double-action"
+          disabled={!isMyBiddingTurn || validBids.length === 0}
           onClick={() => {
-            // If valid, bid next step or highest + 1
-            if (validBids.length > 0) {
+            if (isMyBiddingTurn && validBids.length > 0) {
               placeBid(validBids[0]);
             }
           }}
-          disabled={validBids.length === 0}
           title={`Place minimum valid bid (${minValidBid})`}
         >
           <span className="action-main">BID {minValidBid <= 28 ? minValidBid : 'MAX'}</span>
