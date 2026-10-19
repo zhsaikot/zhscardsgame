@@ -7167,3 +7167,492 @@ body {
   font-size: 0.62rem;
   color: #a8a29e;
 }
+
+
+/* ==========================================================================
+   NAVY BLUE & EMERALD GREEN THEME (ROYAL CASINO 29)
+   Pure Navy Blue chassis & deep Emerald Green velvet felt
+   ========================================================================== */
+
+/* Outer Game Viewport - Deep Midnight Navy */
+.classic-game-viewport {
+  background: #070c18 radial-gradient(circle at 50% 30%, #0d1e38 0%, #040811 100%) !important;
+  color: #f8fafc !important;
+}
+
+/* Top Navigation Bar - Midnight Navy with Emerald Border */
+.classic-top-bar {
+  background: linear-gradient(180deg, #0f172a 0%, #090e18 100%) !important;
+  border-bottom: 2px solid #10b981 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8) !important;
+}
+
+.brand-title {
+  background: linear-gradient(135deg, #a7f3d0 0%, #34d399 50%, #38bdf8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.round-badge {
+  color: #6ee7b7 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+}
+
+.bar-btn {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1px solid #10b981 !important;
+  color: #a7f3d0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.bar-btn:hover {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+  border-color: #6ee7b7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.bar-btn.btn-leave {
+  background: linear-gradient(180deg, #450a0a 0%, #280505 100%) !important;
+  border-color: #ef4444 !important;
+  color: #fca5a5 !important;
+}
+
+.bar-btn.btn-leave:hover {
+  background: linear-gradient(180deg, #5f1111 0%, #380707 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Outer Rim: Polished Midnight Navy / Sapphire Chassis */
+.table-navy-rim,
+.table-mahogany-rim {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #070d18 100%) !important;
+  border: 3.5px solid #10b981 !important;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.85), 0 14px 44px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Inner Felt: Royal Casino Emerald Green Velvet */
+.table-emerald-felt,
+.table-velvet-felt {
+  background: radial-gradient(ellipse at center, #059669 0%, #047857 40%, #064e3b 75%, #022c22 100%) !important;
+  border: 2px solid rgba(52, 211, 153, 0.45) !important;
+  box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Watermark in Table */
+.table-watermark {
+  color: rgba(255, 255, 255, 0.035) !important;
+}
+
+/* Plaques: Midnight Navy with Emerald Border */
+.table-trump-box,
+.table-scoreboard-box {
+  background: linear-gradient(135deg, #0f172a 0%, #080d18 100%) !important;
+  border: 1.5px solid #10b981 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7) !important;
+}
+
+.table-trump-box .plaque-header,
+.table-scoreboard-box .plaque-header {
+  color: #34d399 !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+.trump-secret-card {
+  background: #022c22 !important;
+  border: 1px dashed #34d399 !important;
+  color: #a7f3d0 !important;
+}
+
+.score-points {
+  color: #34d399 !important;
+}
+
+.score-row.team-a .score-team-name {
+  color: #38bdf8 !important;
+}
+
+.score-row.team-b .score-team-name {
+  color: #fbbf24 !important;
+}
+
+.contract-value {
+  color: #6ee7b7 !important;
+}
+
+/* Player Seat Avatars - Navy & Emerald Pulse */
+.avatar-circle-frame {
+  border: 2.5px solid #10b981 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
+}
+
+.avatar-circle-frame.is-clickable-avatar:hover {
+  border-color: #6ee7b7 !important;
+  box-shadow: 0 0 16px #10b981 !important;
+}
+
+.classic-player-seat.is-turn-active .avatar-circle-frame {
+  border-color: #34d399 !important;
+  box-shadow: 0 0 20px rgba(52, 211, 153, 0.95) !important;
+  animation: emeraldTurnPulse 1.8s infinite !important;
+}
+
+@keyframes emeraldTurnPulse {
+  0%, 100% { border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.6); }
+  50% { border-color: #6ee7b7; box-shadow: 0 0 24px rgba(110, 231, 183, 1); }
+}
+
+.player-info-card {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6) !important;
+}
+
+.cards-count-badge {
+  color: #6ee7b7 !important;
+}
+
+.tricks-won-badge {
+  background: rgba(16, 185, 129, 0.25) !important;
+  color: #a7f3d0 !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+}
+
+/* Center Trick Stage */
+.trick-counter-chip {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(16, 185, 129, 0.45) !important;
+  color: #a7f3d0 !important;
+}
+
+.trick-winner-pill {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  border: 2px solid #6ee7b7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.75) !important;
+}
+
+.classic-card-face.winner-glow {
+  box-shadow: 0 0 22px rgba(52, 211, 153, 1), 0 6px 18px rgba(0, 0, 0, 0.8) !important;
+  border: 1.5px solid #34d399 !important;
+}
+
+.winner-card-badge {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.6) !important;
+}
+
+/* Bottom Bidding Console - Deep Navy with Emerald Accents */
+.classic-bidding-console {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(9, 14, 26, 0.96) 100%) !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.85) !important;
+}
+
+.bidding-status-bar.my-turn {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+  color: #6ee7b7 !important;
+}
+
+.bidding-status-bar .info-tag strong {
+  color: #34d399 !important;
+}
+
+.bidding-status-bar .hand-pts-tag strong {
+  color: #a7f3d0 !important;
+}
+
+.btn-bid-num {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1px solid #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+.btn-bid-num.is-valid {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+}
+
+.btn-bid-num.is-valid:hover {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.6) !important;
+}
+
+.btn-bid-num.is-min-suggested {
+  border-color: #6ee7b7 !important;
+  box-shadow: 0 0 10px rgba(110, 231, 183, 0.5) !important;
+}
+
+/* Inline Trump Selection Console - Deep Navy with Emerald Accents */
+.classic-trump-selection-console {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(9, 14, 26, 0.96) 100%) !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.85) !important;
+}
+
+.trump-header-banner.my-turn {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+}
+
+.trump-header-banner .banner-title {
+  color: #34d399 !important;
+}
+
+.trump-header-banner .banner-hint {
+  color: #a7f3d0 !important;
+}
+
+.trump-suit-card-btn {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1.5px solid #10b981 !important;
+}
+
+.trump-suit-card-btn:hover {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6) !important;
+}
+
+.trump-suit-card-btn .suit-hand-count {
+  color: #a7f3d0 !important;
+}
+
+/* ==========================================================================
+   LOBBY / HOME PAGE - NAVY BLUE & EMERALD GREEN
+   ========================================================================== */
+.navy-green-lobby-viewport {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #070c18 radial-gradient(circle at 50% 25%, #0f213d 0%, #040811 100%);
+  color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px 16px;
+}
+
+.navy-green-lobby-container {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+  animation: fadeInLobby 0.5s ease;
+}
+
+.navy-green-lobby-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.header-eyebrow .eyebrow-suit.green { color: #10b981; }
+.header-eyebrow .eyebrow-suit.navy { color: #38bdf8; }
+.header-eyebrow .eyebrow-text { color: #34d399; }
+
+.emblem-29-emerald {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #a7f3d0 0%, #10b981 60%, #047857 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 14px rgba(16, 185, 129, 0.6));
+  letter-spacing: -0.05em;
+}
+
+.navy-green-lobby-subtitle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.navy-green-lobby-card {
+  width: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid #10b981;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.avatar-emerald-ring {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #10b981;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.avatar-emerald-ring .avatar-edit-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  background: #10b981;
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 1px 3px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.lobby-avatar-picker-bar:hover .avatar-emerald-ring {
+  border-color: #6ee7b7;
+  box-shadow: 0 0 14px #10b981;
+}
+
+.navy-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navy-input-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #34d399;
+  letter-spacing: 0.05em;
+}
+
+.navy-input-field {
+  background: rgba(10, 16, 30, 0.85);
+  border: 1.5px solid #10b981;
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.navy-input-field:focus {
+  border-color: #6ee7b7;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+}
+
+.navy-error-banner {
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.navy-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-emerald-gold {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  border: 1.5px solid #a7f3d0;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btn-emerald-gold:hover:not(:disabled) {
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.75);
+}
+
+.btn-emerald-gold:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-navy-sapphire {
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border: 1.5px solid #475569;
+  color: #f1f5f9;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btn-navy-sapphire:hover:not(:disabled) {
+  background: linear-gradient(180deg, #475569 0%, #334155 100%);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.navy-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  margin: 4px 0;
+}
+
+.navy-join-row {
+  display: flex;
+  gap: 8px;
+}
+
+.navy-join-row .join-input {
+  flex: 1;
+}
+
+.btn-emerald-gold.btn-join {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+}
+
+.navy-seating-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.seating-preview-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #34d399;
+  letter-spacing: 0.06em;
+  text-align: center;
+}

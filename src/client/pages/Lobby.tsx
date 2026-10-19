@@ -68,7 +68,7 @@ const Lobby: React.FC = () => {
   };
 
   return (
-    <div className="ruby-lobby-viewport">
+    <div className="navy-green-lobby-viewport">
       {/* Background Floating Card Suit Emblems */}
       <div className="bg-floating-suits">
         <span className="suit-float float-1">♠</span>
@@ -77,31 +77,31 @@ const Lobby: React.FC = () => {
         <span className="suit-float float-4">♣</span>
       </div>
 
-      <div className="ruby-lobby-container">
-        {/* Header matching Casino Ruby Red & Mahogany theme */}
-        <header className="ruby-lobby-header">
+      <div className="navy-green-lobby-container">
+        {/* Header matching Navy Blue & Emerald Green theme */}
+        <header className="navy-green-lobby-header">
           <div className="header-eyebrow">
-            <span className="eyebrow-suit red">♥</span>
+            <span className="eyebrow-suit green">♣</span>
             <span className="eyebrow-text">ROYAL 29 CARD ARENA</span>
-            <span className="eyebrow-suit black">♠</span>
+            <span className="eyebrow-suit navy">♠</span>
           </div>
 
           <div className="emblem-29-wrap">
-            <h1 className="emblem-29-gold">29</h1>
+            <h1 className="emblem-29-emerald">29</h1>
           </div>
 
-          <p className="ruby-lobby-subtitle">CLASSIC TRICK-TAKING PARTNERSHIP GAME</p>
+          <p className="navy-green-lobby-subtitle">CLASSIC TRICK-TAKING PARTNERSHIP GAME</p>
         </header>
 
-        {/* Main Mahogany & Ruby Velvet Plaque Card */}
-        <div className="ruby-lobby-card">
+        {/* Main Midnight Navy & Emerald Plaque Card */}
+        <div className="navy-green-lobby-card">
           {/* Profile Avatar Selection Row */}
           <div
             className="lobby-avatar-picker-bar"
             onClick={() => setShowAvatarModal(true)}
             title="Click to customize or upload your avatar"
           >
-            <div className="avatar-gold-ring">
+            <div className="avatar-emerald-ring">
               <img src={avatar} alt="Profile Avatar" className="avatar-img-circle" />
               <span className="avatar-edit-badge">📷</span>
             </div>
@@ -112,14 +112,14 @@ const Lobby: React.FC = () => {
           </div>
 
           {/* Alias Input Field */}
-          <div className="ruby-input-group">
-            <label className="ruby-input-label" htmlFor="player-alias">
+          <div className="navy-input-group">
+            <label className="navy-input-label" htmlFor="player-alias">
               YOUR PLAYER NAME / ALIAS
             </label>
             <input
               id="player-alias"
               type="text"
-              className="ruby-input-field"
+              className="navy-input-field"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="e.g. Maverick, Royale, Ace"
@@ -130,29 +130,29 @@ const Lobby: React.FC = () => {
           </div>
 
           {/* Error Message */}
-          {error && <div className="ruby-error-banner">{error}</div>}
+          {error && <div className="navy-error-banner">{error}</div>}
 
           {/* Game Action Buttons */}
-          <div className="ruby-actions-stack">
+          <div className="navy-actions-stack">
             {/* Solo Mode: Play vs Bots */}
             <button
               type="button"
-              className="btn-ruby-gold"
+              className="btn-emerald-gold"
               onClick={handleStartSolo}
               disabled={loading}
               title="Play immediately against 3 AI bots"
             >
-              <span className="btn-icon">♦</span>
+              <span className="btn-icon">♠</span>
               <span className="btn-text">
                 {loading ? 'Launching Match...' : 'Play Solo vs AI Bots'}
               </span>
-              <span className="btn-icon">♦</span>
+              <span className="btn-icon">♠</span>
             </button>
 
             {/* Multiplayer: Create New Table */}
             <button
               type="button"
-              className="btn-ruby-mahogany"
+              className="btn-navy-sapphire"
               onClick={handleCreateMultiplayer}
               disabled={loading}
               title="Create a private room for friends"
@@ -161,15 +161,15 @@ const Lobby: React.FC = () => {
             </button>
 
             {/* Divider */}
-            <div className="ruby-divider">
+            <div className="navy-divider">
               <span>OR JOIN TABLE</span>
             </div>
 
             {/* Join Table Input & Button */}
-            <div className="ruby-join-row">
+            <div className="navy-join-row">
               <input
                 type="text"
-                className="ruby-input-field join-input"
+                className="navy-input-field join-input"
                 value={gameIdInput}
                 onChange={(e) => setGameIdInput(e.target.value)}
                 placeholder="Enter Table / Room ID"
@@ -178,7 +178,7 @@ const Lobby: React.FC = () => {
               />
               <button
                 type="button"
-                className="btn-ruby-gold btn-join"
+                className="btn-emerald-gold btn-join"
                 onClick={handleJoinGame}
                 disabled={loading}
               >
@@ -188,7 +188,7 @@ const Lobby: React.FC = () => {
           </div>
 
           {/* Table Seating Arrangement Card */}
-          <div className="ruby-seating-preview">
+          <div className="navy-seating-preview">
             <div className="seating-preview-title">TABLE PARTNERSHIP ARRANGEMENT</div>
             <div className="seating-preview-grid">
               <div className="seat-pod-pill team-a">

@@ -178,11 +178,11 @@ const GameTable: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Playing Arena: Casino Ruby Red Table with Mahogany Rim */}
+      {/* Main Playing Arena: Royal Emerald Green Felt Table with Midnight Navy Rim */}
       <main className="classic-arena-container">
-        <div className="classic-ruby-table">
-          <div className="table-mahogany-rim">
-            <div className="table-velvet-felt">
+        <div className="classic-felt-table">
+          <div className="table-navy-rim">
+            <div className="table-emerald-felt">
               {/* Table Center Watermark */}
               <div className="table-watermark">29</div>
 
