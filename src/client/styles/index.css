@@ -7656,3 +7656,146 @@ body {
   letter-spacing: 0.06em;
   text-align: center;
 }
+
+
+/* ==========================================================================
+   PERFECT BOTTOM-ANCHORED HAND & SEAT LAYOUT
+   Cards anchored directly to bottom edge of screen/table
+   South Player avatar anchored to Bottom-Left
+   ========================================================================== */
+
+/* Arena Container */
+.classic-arena-container {
+  position: relative !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 6px 14px 0 14px !important;
+  gap: 0 !important;
+}
+
+/* Felt Table expands to fill arena */
+.classic-felt-table,
+.classic-ruby-table {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 1220px !important;
+  margin: 0 auto !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  position: relative !important;
+}
+
+/* South Player ("You") Avatar - Positioned cleanly at Bottom-Left */
+.classic-player-seat.seat-south {
+  bottom: 16px !important;
+  left: 24px !important;
+  transform: none !important;
+  flex-direction: row !important;
+  text-align: left !important;
+  z-index: 25 !important;
+}
+
+.classic-player-seat.seat-south .player-name-line,
+.classic-player-seat.seat-south .player-meta-line {
+  justify-content: flex-start !important;
+}
+
+/* Bottom Console: Absolute Bottom Anchoring - ZERO Gap below cards */
+.classic-bottom-console {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  z-index: 35 !important;
+  pointer-events: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.classic-bottom-console > * {
+  pointer-events: auto !important;
+}
+
+/* Hand Wrapper & Action Row */
+.classic-hand-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 820px !important;
+  margin: 0 auto !important;
+}
+
+.hand-action-banner-row {
+  height: 26px !important;
+  margin-bottom: 2px !important;
+}
+
+/* Fan Cards Container: Anchored flush to the bottom */
+.classic-fan-container {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  height: 102px !important;
+  position: relative !important;
+  padding: 0 24px 0px 24px !important;
+  margin-bottom: 0px !important;
+}
+
+/* Authentic Playing Card: Crisp, large, resting at bottom */
+.fan-card {
+  position: relative !important;
+  width: 66px !important;
+  height: 96px !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75) !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+  cursor: pointer !important;
+  transition: transform 0.22s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s ease !important;
+  margin: 0 -11px !important;
+  user-select: none !important;
+  bottom: 0 !important;
+}
+
+.fan-card:hover {
+  transform: translateY(-22px) scale(1.1) !important;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.9) !important;
+  z-index: 60 !important;
+}
+
+.fan-card.is-selected {
+  border: 2.5px solid #10b981 !important;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.95), 0 14px 28px rgba(0, 0, 0, 0.9) !important;
+}
+
+.fan-card.can-play {
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.8), 0 6px 18px rgba(0, 0, 0, 0.7) !important;
+  border: 2px solid #34d399 !important;
+}
+
+/* Bidding and Trump Consoles sit cleanly directly above the bottom cards */
+.classic-bidding-console {
+  margin-bottom: 4px !important;
+  max-width: 680px !important;
+}
+
+.classic-trump-selection-console {
+  margin-bottom: 4px !important;
+  max-width: 680px !important;
+}
+
+/* Center Trick Stage Placement */
+.classic-trick-stage {
+  top: 46% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
